@@ -1,0 +1,87 @@
+<!-- Hero Section -->
+<section class="mb-10">
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div>
+      <p class="text-teal-600 font-semibold mb-2">Welcome back, Rohit! 👋</p>
+      <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight">
+        Taking care of your health <br class="hidden md:block"> is now much easier.
+      </h2>
+    </div>
+    <div class="relative w-full md:w-96">
+      <input type="text" placeholder="Search for tests (e.g. CBC, Vitamin D)" 
+             class="w-full bg-white border border-gray-100 rounded-2xl py-4 pl-12 pr-4 shadow-sm focus:ring-2 focus:ring-teal-500 transition-all">
+      <lucide-icon [name]="SearchIcon" class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5"></lucide-icon>
+    </div>
+  </div>
+</section>
+
+<!-- Categories -->
+<section class="mb-10">
+  <div class="flex items-center justify-between mb-6">
+    <h3 class="text-xl font-bold text-gray-800">Categories</h3>
+    <button class="text-teal-600 font-semibold flex items-center gap-1 hover:underline">
+      View all <lucide-icon [name]="ArrowIcon" class="w-4 h-4"></lucide-icon>
+    </button>
+  </div>
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+    <button *ngFor="let cat of categories" 
+            class="flex flex-col items-center gap-3 p-6 bg-white border border-gray-50 rounded-3xl hover:shadow-md transition-all group">
+      <div [class]="cat.color + ' w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform'">
+        <lucide-icon [name]="cat.icon" class="w-6 h-6"></lucide-icon>
+      </div>
+      <span class="font-medium text-gray-700">{{cat.name}}</span>
+    </button>
+  </div>
+</section>
+
+<!-- Popular Tests -->
+<section class="mb-10">
+  <div class="flex items-center justify-between mb-6">
+    <h3 class="text-xl font-bold text-gray-800">Popular Health Schemes</h3>
+    <button class="text-teal-600 font-semibold flex items-center gap-1 hover:underline">
+      View all
+    </button>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div *ngFor="let test of popularTests" 
+         class="bg-white border border-gray-50 rounded-[2rem] p-6 shadow-sm hover:shadow-xl transition-all group">
+      <div class="flex justify-between items-start mb-4">
+        <div class="bg-teal-50 text-teal-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+          Best Seller
+        </div>
+        <div class="text-gray-400">
+          <lucide-icon [name]="ArrowIcon" class="w-5 h-5 -rotate-45"></lucide-icon>
+        </div>
+      </div>
+      <h4 class="text-lg font-bold text-gray-800 mb-2">{{test.name}}</h4>
+      <p class="text-gray-500 text-sm mb-6">Includes 72 parameters. Reports in {{test.duration}}.</p>
+      
+      <div class="flex items-end justify-between">
+        <div>
+          <span class="text-2xl font-black text-gray-900">₹{{test.price}}</span>
+          <span class="text-gray-400 line-through ml-2 text-sm">₹{{test.originalPrice}}</span>
+          <p class="text-green-600 text-xs font-bold">{{test.discount}}% OFF</p>
+        </div>
+        <button class="bg-teal-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-teal-700 transition-colors shadow-lg shadow-teal-100">
+          Book Now
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Promo Banner -->
+<section class="mb-4">
+  <div class="bg-teal-900 rounded-[2.5rem] p-10 relative overflow-hidden text-white">
+    <div class="relative z-10 max-w-md">
+      <h3 class="text-3xl font-bold mb-4">Flat 50% OFF on <br> Your First Booking!</h3>
+      <p class="text-teal-200 mb-8 font-medium">Use code <span class="text-white bg-teal-800 px-3 py-1 rounded-lg">AGNI50</span> at checkout.</p>
+      <button class="bg-white text-teal-900 px-8 py-4 rounded-2xl font-bold hover:bg-gray-100 transition-colors">
+        Check Health Packages
+      </button>
+    </div>
+    <div class="absolute right-0 bottom-0 top-0 w-1/2 opacity-20 pointer-events-none">
+        <lucide-icon [name]="ArrowIcon" class="w-full h-full text-white"></lucide-icon>
+    </div>
+  </div>
+</section>

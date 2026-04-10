@@ -1,0 +1,91 @@
+<div class="max-w-6xl mx-auto">
+  <!-- Header -->
+  <header class="mb-10">
+    <h1 class="text-3xl font-black text-gray-900 mb-2">Tests Catalog</h1>
+    <p class="text-gray-500">Explore over 500+ lab tests and health packages.</p>
+  </header>
+
+  <!-- Search & Filter Bar -->
+  <div class="flex flex-col md:flex-row gap-4 mb-8">
+    <div class="relative flex-1">
+      <input type="text" placeholder="Search for tests..." 
+             (input)="onSearch($event)"
+             class="w-full bg-white border border-gray-100 rounded-2xl py-4 pl-12 pr-4 shadow-sm focus:ring-2 focus:ring-teal-500 transition-all">
+      <lucide-icon [name]="SearchIcon" class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5"></lucide-icon>
+    </div>
+    <div class="flex gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
+      <button *ngFor="let cat of categories" 
+              (click)="selectCategory(cat)"
+              [class]="(selectedCategory | async) === cat ? 'bg-teal-600 text-white' : 'bg-white text-gray-600 border border-gray-100 hover:bg-gray-50'"
+              class="px-6 py-4 rounded-2xl font-semibold transition-all whitespace-nowrap">
+        {{cat}}
+      </button>
+    </div>
+  </div>
+
+  <!-- Tests Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
+    <div *ngFor="let test of filteredTests$ | async" 
+         class="bg-white border border-gray-50 rounded-[2.5rem] p-8 shadow-sm hover:shadow-xl transition-all flex flex-col group h-full">
+      <div class="flex justify-between items-start mb-6">
+        <div class="bg-gray-50 text-gray-500 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-tighter">
+          {{test.category}}
+        </div>
+        <div *ngIf="test.popular" class="bg-amber-50 text-amber-600 text-[10px] font-black px-3 py-1 rounded-full uppercase">
+          Popular
+        </div>
+      </div>
+
+      <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-teal-600 transition-colors">{{test.name}}</h3>
+      <p class="text-gray-500 text-sm mb-6 flex-1 line-clamp-2">{{test.description}}</p>
+
+      <!-- Preparation Info -->
+      <div class="bg-teal-50/50 rounded-2xl p-4 mb-8">
+        <div class="flex items-center gap-2 text-teal-700 font-bold text-xs mb-2">
+          <lucide-icon [name]="InfoIcon" class="w-4 h-4"></lucide-icon>
+          PREPARATION INFO
+        </div>
+        <ul class="text-xs text-teal-600 space-y-1">
+          <li *ngFor="let prep of test.preparation" class="flex items-start gap-1">
+            <span class="mt-1">•</span> {{prep}}
+          </li>
+        </ul>
+      </div>
+
+      <!-- Footer Info -->
+      <div class="flex items-center gap-4 text-xs text-gray-400 mb-8 font-medium">
+        <div class="flex items-center gap-1">
+          <lucide-icon [name]="ClockIcon" class="w-4 h-4 text-gray-300"></lucide-icon>
+          {{test.reportTime}} Reports
+        </div>
+        <div class="flex items-center gap-1">
+          <lucide-icon [name]="SampleIcon" class="w-4 h-4 text-gray-300"></lucide-icon>
+          {{test.sampleType}}
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-6 border-t border-gray-50">
+        <div>
+          <span class="text-2xl font-black text-gray-900">₹{{test.price}}</span>
+        </div>
+        <button [routerLink]="['/checkout']" [queryParams]="{testId: test.id}"
+                class="bg-gray-900 text-white px-8 py-4 rounded-2xl font-bold hover:bg-teal-600 transition-all hover:shadow-lg hover:shadow-teal-100">
+          Book
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Skeleton Loader (Placeholder) -->
+  <div *ngIf="!(filteredTests$ | async)" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div *ngFor="let i of [1,2,3,4,5,6]" class="bg-white rounded-[2.5rem] p-8 animate-pulse">
+      <div class="h-6 bg-gray-100 rounded-full w-24 mb-6"></div>
+      <div class="h-8 bg-gray-100 rounded-xl w-3/4 mb-4"></div>
+      <div class="h-20 bg-gray-50 rounded-2xl mb-8"></div>
+      <div class="flex justify-between items-center mt-auto border-t border-gray-50 pt-6">
+        <div class="h-8 bg-gray-100 rounded-lg w-20"></div>
+        <div class="h-12 bg-gray-100 rounded-2xl w-28"></div>
+      </div>
+    </div>
+  </div>
+</div>

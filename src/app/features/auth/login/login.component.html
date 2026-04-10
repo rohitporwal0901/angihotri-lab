@@ -1,0 +1,69 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8 relative overflow-hidden">
+  <!-- Decorative background -->
+  <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+    <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-teal-400 rounded-full blur-[120px]"></div>
+    <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-400 rounded-full blur-[120px]"></div>
+  </div>
+
+  <div class="max-w-md w-full space-y-8 bg-white/80 backdrop-blur-xl p-10 rounded-[2.5rem] shadow-2xl border border-white/20 relative z-10">
+    <div class="text-center">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-teal-600 rounded-2xl text-white mb-6 shadow-xl shadow-teal-100">
+        <lucide-icon [name]="LoginIcon" class="w-8 h-8"></lucide-icon>
+      </div>
+      <h2 class="text-3xl font-black text-gray-900 tracking-tight">Welcome Back</h2>
+      <p class="mt-2 text-sm text-gray-500 font-medium">Access your health reports and bookings.</p>
+    </div>
+
+    <form class="mt-8 space-y-6" (ngSubmit)="onSubmit()">
+      <div class="space-y-4">
+        <div class="relative">
+          <label class="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1 mb-1 block">Email Address</label>
+          <div class="relative">
+            <input type="email" [(ngModel)]="email" name="email" required
+                   class="appearance-none relative block w-full px-12 py-4 border border-gray-100 placeholder-gray-400 text-gray-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all font-medium" 
+                   placeholder="rohit@example.com">
+            <lucide-icon [name]="MailIcon" class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5"></lucide-icon>
+          </div>
+        </div>
+
+        <div class="relative">
+          <label class="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1 mb-1 block">Password</label>
+          <div class="relative">
+            <input type="password" [(ngModel)]="pass" name="pass" required
+                   class="appearance-none relative block w-full px-12 py-4 border border-gray-100 placeholder-gray-400 text-gray-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all font-medium" 
+                   placeholder="••••••••">
+            <lucide-icon [name]="LockIcon" class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5"></lucide-icon>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="error" class="bg-red-50 text-red-600 p-4 rounded-xl text-xs font-bold border border-red-100 animate-shake">
+        {{error}}
+      </div>
+
+      <div>
+        <button type="submit" [disabled]="loading"
+                class="group relative w-full flex justify-center py-4 px-4 border border-transparent text-sm font-black rounded-2xl text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-all shadow-lg shadow-teal-100 active:scale-95 disabled:opacity-50">
+          <span *ngIf="!loading">Sign In</span>
+          <div *ngIf="loading" class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+        </button>
+      </div>
+
+      <div class="relative py-4">
+        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-100"></div></div>
+        <div class="relative flex justify-center text-xs uppercase"><span class="bg-white px-4 text-gray-400 font-bold tracking-widest">Or continue with</span></div>
+      </div>
+
+      <button type="button" (click)="googleLogin()" [disabled]="loading"
+              class="w-full flex items-center justify-center gap-3 py-4 px-4 border border-gray-100 bg-white rounded-2xl text-sm font-bold text-gray-700 hover:bg-gray-50 transition-all shadow-sm active:scale-95">
+        <lucide-icon [name]="GoogleIcon" class="w-5 h-5 text-teal-600"></lucide-icon>
+        Google Account
+      </button>
+    </form>
+
+    <p class="text-center text-sm font-medium text-gray-500 pt-4">
+      Don't have an account? 
+      <a routerLink="/signup" class="text-teal-600 font-bold hover:underline">Create One</a>
+    </p>
+  </div>
+</div>

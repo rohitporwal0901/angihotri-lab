@@ -1,0 +1,55 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-10">
+    <h1 class="text-3xl font-black text-gray-900 mb-2">My Profile</h1>
+    <p class="text-gray-500">Manage your health records and bookings.</p>
+  </header>
+
+  <!-- User Info -->
+  <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-gray-50 mb-10 flex items-center gap-6">
+    <div class="w-20 h-20 bg-teal-100 rounded-3xl flex items-center justify-center text-teal-600">
+      <lucide-icon [name]="UserIcon" class="w-10 h-10"></lucide-icon>
+    </div>
+    <div>
+      <h2 class="text-2xl font-bold text-gray-900">Rohit</h2>
+      <p class="text-gray-500">+91 98765 43210</p>
+    </div>
+  </div>
+
+  <!-- Bookings Section -->
+  <div>
+    <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+      <lucide-icon [name]="ListIcon" class="w-6 h-6 text-teal-600"></lucide-icon>
+      Recent Bookings
+    </h3>
+    
+    <div class="space-y-4">
+      <div *ngFor="let booking of bookings$ | async" 
+           [routerLink]="['/booking', booking.id]"
+           class="bg-white p-6 rounded-[2rem] border border-gray-50 hover:shadow-xl hover:border-teal-100 transition-all cursor-pointer group">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400 group-hover:bg-teal-50 group-hover:text-teal-600 transition-colors">
+              <lucide-icon [name]="ListIcon" class="w-6 h-6"></lucide-icon>
+            </div>
+            <div>
+              <p class="font-bold text-gray-900">{{booking.tests[0].name}}</p>
+              <p class="text-xs text-gray-500">{{booking.scheduledDate}} • {{booking.scheduledSlot}}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="text-right hidden sm:block">
+              <p class="text-xs font-black uppercase tracking-widest text-teal-600">{{booking.status}}</p>
+              <p class="text-sm font-bold text-gray-900">₹{{booking.totalAmount}}</p>
+            </div>
+            <lucide-icon [name]="NextIcon" class="w-6 h-6 text-gray-300 group-hover:text-teal-600 transition-colors"></lucide-icon>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!(bookings$ | async)?.length" class="text-center py-20 bg-gray-50 rounded-[2.5rem]">
+        <p class="text-gray-400 font-medium">No bookings found yet.</p>
+        <button [routerLink]="['/tests']" class="mt-4 text-teal-600 font-bold hover:underline">Browse Tests</button>
+      </div>
+    </div>
+  </div>
+</div>

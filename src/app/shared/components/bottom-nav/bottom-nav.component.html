@@ -1,0 +1,14 @@
+<nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex items-center justify-around px-2 py-3 md:hidden shadow-lg z-50">
+  <div *ngIf="!(authService.user$ | async)" class="absolute bottom-16 left-4 right-4 animate-bounce">
+      <button routerLink="/login" class="w-full bg-teal-600 text-white py-3 rounded-2xl font-bold shadow-xl shadow-teal-100">Sign in to book tests</button>
+  </div>
+  
+  <a *ngFor="let item of navItems" 
+     [routerLink]="item.route" 
+     routerLinkActive="text-teal-600"
+     [routerLinkActiveOptions]="{exact: true}"
+     class="flex flex-col items-center gap-1 text-gray-400 decoration-none group transition-all duration-200">
+    <lucide-icon [name]="item.icon" class="w-6 h-6 group-hover:scale-110 transition-transform"></lucide-icon>
+    <span class="text-[10px] font-medium">{{item.label}}</span>
+  </a>
+</nav>

@@ -1,0 +1,110 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-10">
+    <h1 class="text-3xl font-black text-gray-900 mb-2">Checkout</h1>
+    <p class="text-gray-500">Review your order and select collection details.</p>
+  </header>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+    <!-- Left Column: Details -->
+    <div class="lg:col-span-2 space-y-8">
+      
+      <!-- Test Summary -->
+      <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-50">
+        <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+          <lucide-icon [name]="CardIcon" class="w-5 h-5 text-teal-600"></lucide-icon>
+          Selected Tests
+        </h3>
+        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
+          <div>
+            <p class="font-bold text-gray-900">{{selectedTest?.name}}</p>
+            <p class="text-xs text-gray-500">Home Collection Included</p>
+          </div>
+          <span class="font-black text-gray-900">₹{{selectedTest?.price}}</span>
+        </div>
+      </div>
+
+      <!-- Address Picker -->
+      <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-50">
+        <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+          <lucide-icon [name]="MapPinIcon" class="w-5 h-5 text-teal-600"></lucide-icon>
+          Collection Address
+        </h3>
+        <div class="relative">
+          <input #addressInput type="text" [(ngModel)]="address" placeholder="Search for your building, street..." 
+                 class="w-full bg-gray-50 border-none rounded-2xl py-5 pl-12 pr-4 focus:ring-2 focus:ring-teal-500 transition-all font-medium">
+          <lucide-icon [name]="MapPinIcon" class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5"></lucide-icon>
+        </div>
+      </div>
+
+      <!-- Slot Selection -->
+      <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-50">
+        <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+          <lucide-icon [name]="CalendarIcon" class="w-5 h-5 text-teal-600"></lucide-icon>
+          Select Date & Slot
+        </h3>
+        
+        <div class="flex gap-3 overflow-x-auto pb-4 mb-6 scrollbar-hide">
+          <button *ngFor="let d of dates" 
+                  (click)="selectedDate = d.date"
+                  [class]="selectedDate === d.date ? 'bg-teal-600 text-white shadow-lg shadow-teal-100' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'"
+                  class="flex flex-col items-center min-w-[80px] py-4 rounded-2xl transition-all">
+            <span class="text-[10px] font-bold uppercase opacity-60">{{d.day}}</span>
+            <span class="text-sm font-black">{{d.date}}</span>
+          </button>
+        </div>
+
+        <div class="space-y-3">
+          <button *ngFor="let slot of slots" 
+                  (click)="selectedSlot = slot"
+                  [class]="selectedSlot === slot ? 'border-teal-600 bg-teal-50 text-teal-700' : 'border-gray-100 bg-white text-gray-600 hover:bg-gray-50'"
+                  class="w-full text-left p-4 rounded-2xl border-2 transition-all font-bold flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <lucide-icon [name]="ClockIcon" class="w-5 h-5 opacity-40"></lucide-icon>
+              {{slot}}
+            </div>
+            <div *ngIf="selectedSlot === slot" class="w-5 h-5 bg-teal-600 rounded-full flex items-center justify-center">
+              <lucide-icon [name]="NextIcon" class="w-3 h-3 text-white"></lucide-icon>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Summary -->
+    <div class="lg:col-span-1">
+      <div class="bg-gray-900 text-white rounded-[2.5rem] p-8 shadow-2xl sticky top-8">
+        <h2 class="text-xl font-bold mb-8">Bill Summary</h2>
+        
+        <div class="space-y-4 mb-8">
+          <div class="flex justify-between text-gray-400 text-sm">
+            <span>Item Total</span>
+            <span class="text-white font-bold">₹{{selectedTest?.price}}</span>
+          </div>
+          <div class="flex justify-between text-gray-400 text-sm">
+            <span>Collection Charges</span>
+            <span class="text-green-400 font-bold uppercase">FREE</span>
+          </div>
+          <div class="flex justify-between text-gray-400 text-sm">
+            <span>Safety Fee</span>
+            <span class="text-white font-bold">₹20</span>
+          </div>
+        </div>
+
+        <div class="border-t border-gray-800 pt-6 mb-10">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-lg font-bold text-gray-400">Total Amount</span>
+            <span class="text-3xl font-black">₹{{(selectedTest?.price || 0) + 20}}</span>
+          </div>
+          <p class="text-[10px] text-teal-400 font-bold uppercase tracking-widest">Inclusive of all taxes</p>
+        </div>
+
+        <button (click)="placeOrder()"
+                class="w-full bg-teal-600 text-white py-5 rounded-[1.5rem] font-black text-lg hover:bg-teal-500 transition-all shadow-xl shadow-teal-900/40 active:scale-95">
+          Proceed to Pay
+        </button>
+        
+        <p class="text-center text-[10px] text-gray-500 mt-6">Secure encrypted payment powered by Agnihotri Labs</p>
+      </div>
+    </div>
+  </div>
+</div>

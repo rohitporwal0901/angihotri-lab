@@ -1,0 +1,36 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Users collection
+    match /Users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Tests Catalog - Publicly readable
+    match /Tests_Catalog/{testId} {
+      allow read: if true;
+      allow write: if false; // Admin only
+    }
+
+    // Bookings collection
+    match /Bookings/{bookingId} {
+      // Customer can read their own bookings
+      // Technician assigned can read
+      allow read: if request.auth != null && (
+        resource.data.userId == request.auth.uid || 
+        resource.data.technicianId == request.auth.uid
+      );
+      
+      // Only customer can create
+      allow create: if request.auth != null;
+      
+      // Update: Technician can update status/location, Customer can cancel
+      allow update: if request.auth != null && (
+        resource.data.userId == request.auth.uid || 
+        resource.data.technicianId == request.auth.uid
+      );
+    }
+  }
+}

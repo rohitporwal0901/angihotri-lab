@@ -1,0 +1,16 @@
+{
+  "rules": {
+    "active_tracking": {
+      "$bookingId": {
+        // Customer who booked can read
+        ".read": "auth != null && root.child('Bookings').child($bookingId).child('userId').val() == auth.uid",
+        // Only assigned technician can write
+        ".write": "auth != null && root.child('Bookings').child($bookingId).child('technicianId').val() == auth.uid",
+        
+        "lat": { ".validate": "newData.isNumber()" },
+        "lng": { ".validate": "newData.isNumber()" },
+        "last_updated": { ".validate": "newData.isNumber()" }
+      }
+    }
+  }
+}
