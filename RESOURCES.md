@@ -13,19 +13,14 @@
 - **Firestore:** Go to Build > Firestore Database > Create Database. Choose "Start in Test Mode" (or use the rules provided in `firestore.rules`).
 - **Realtime Database:** Go to Build > Realtime Database > Create Database.
 
-## 2. Google Maps API Key
-1.  Go to the [Google Cloud Console](https://console.cloud.google.com/).
-2.  Select or create a project.
-3.  Go to **APIs & Services > Library**.
-4.  Search for and Enable:
-    - **Maps JavaScript API**
-    - **Places API** (Required for Address Autocomplete)
-    - **Geolocation API**
-5.  Go to **APIs & Services > Credentials**.
-6.  Click **"Create Credentials" > "API Key"**.
-7.  Copy this key and paste it into:
-    - `src/environments/environment.ts` under `googleMapsApiKey`.
-    - `src/index.html` in the script tag: `key=YOUR_API_KEY`.
+## 2. Map Configuration (Leaflet + OpenStreetMap)
+This app uses **Leaflet** and **OpenStreetMap** for map displays, which is **completely free** and does not require a credit card or API key.
+
+- **Styles:** Leaflet CSS is imported in `src/styles.css`.
+- **Logic:** Map initialization and markers are handled in `booking-details.component.ts`.
+
+> [!NOTE]
+> Google Maps was previously used but has been replaced to avoid the credit card/billing requirement for development.
 
 ---
 ### 🚨 Important Security Note

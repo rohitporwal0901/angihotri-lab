@@ -62,18 +62,8 @@
             LIVE TRACKING
         </div>
 
-        <google-map [options]="mapOptions" height="100%" width="100%" [center]="center" [zoom]="zoom">
-          <!-- Customer Location -->
-          <map-marker [position]="{lat: booking.address.lat, lng: booking.address.lng}" 
-                    [options]="{icon: 'https://cdn-icons-png.flaticon.com/32/1476/1476140.png'}">
-          </map-marker>
-
-          <!-- Technician Location -->
-          <map-marker *ngIf="tracking$ | async as tracking"
-                    [position]="{lat: tracking.lat, lng: tracking.lng}"
-                    [options]="{icon: 'https://cdn-icons-png.flaticon.com/32/7144/7144889.png'}">
-          </map-marker>
-        </google-map>
+        <!-- Leaflet Map Container -->
+        <div id="map" class="h-full w-full z-0"></div>
 
         <div class="absolute bottom-10 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-md px-8 py-4 rounded-2xl shadow-2xl border border-gray-100 min-w-[300px]">
             <div class="flex items-center gap-4">

@@ -5,7 +5,6 @@ import { LucideAngularModule, MapPin, Calendar, Clock, CreditCard, ChevronRight 
 import { DatabaseService } from '../../../core/services/database.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
-declare const google: any;
 
 @Component({
   selector: 'app-checkout',
@@ -54,12 +53,9 @@ export class CheckoutComponent implements OnInit {
   }
 
   initAutocomplete() {
-    if (typeof google === 'undefined') return;
-    const autocomplete = new google.maps.places.Autocomplete(this.addressInput.nativeElement);
-    autocomplete.addListener('place_changed', () => {
-      const place = autocomplete.getPlace();
-      this.address = place.formatted_address;
-    });
+    // Google Places Autocomplete removed as it requires a paid API key.
+    // Standard text input will be used instead.
+    console.log('Autocomplete disabled - please enter address manually');
   }
 
   async placeOrder() {
