@@ -1,109 +1,137 @@
-<div class="max-w-4xl mx-auto">
-  <header class="mb-10">
-    <h1 class="text-3xl font-black text-gray-900 mb-2">Checkout</h1>
-    <p class="text-gray-500">Review your order and select collection details.</p>
+<div class="max-w-5xl mx-auto py-8 lg:py-12 px-4">
+  <header class="mb-12 flex items-center justify-between">
+    <div>
+        <h1 class="text-3xl md:text-4xl font-black text-slate-900 mb-2 leading-none">Complete Booking</h1>
+        <p class="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Step 3 of 3: Finalize Details</p>
+    </div>
+    <div class="hidden md:flex items-center gap-2 bg-white px-6 py-4 rounded-2xl shadow-sm border border-slate-50">
+        <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+        <span class="text-sm font-black text-slate-700">100% Secure Checkout</span>
+    </div>
   </header>
 
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
-    <!-- Left Column: Details -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
+    <!-- Left Column: Booking Form -->
     <div class="lg:col-span-2 space-y-8">
       
-      <!-- Test Summary -->
-      <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-50">
-        <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
-          <lucide-icon [name]="CardIcon" class="w-5 h-5 text-teal-600"></lucide-icon>
-          Selected Tests
-        </h3>
-        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
-          <div>
-            <p class="font-bold text-gray-900">{{selectedTest?.name}}</p>
-            <p class="text-xs text-gray-500">Home Collection Included</p>
-          </div>
-          <span class="font-black text-gray-900">₹{{selectedTest?.price}}</span>
+      <!-- Test Selection Summary (Mini) -->
+      <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-brand-teal/5 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-brand-teal/5 rounded-full -mr-16 -mt-16"></div>
+        <div class="relative z-10 flex items-center gap-6">
+            <div class="w-16 h-16 bg-brand-mint text-brand-teal rounded-2xl flex items-center justify-center">
+                <lucide-icon [name]="CardIcon" class="w-8 h-8"></lucide-icon>
+            </div>
+            <div class="flex-1">
+                <p class="text-[10px] text-brand-teal font-black uppercase tracking-widest mb-1">Selected Test</p>
+                <h3 class="text-xl font-black text-slate-900">{{selectedTest?.name || 'Loading test...'}}</h3>
+                <p class="text-slate-400 text-xs font-bold">{{selectedTest?.category}} • Professional Home Collection</p>
+            </div>
+            <span class="text-2xl font-black text-slate-900 font-mono">₹{{selectedTest?.price}}</span>
         </div>
       </div>
 
-      <!-- Address Picker -->
-      <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-50">
-        <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
-          <lucide-icon [name]="MapPinIcon" class="w-5 h-5 text-teal-600"></lucide-icon>
-          Collection Address
-        </h3>
-        <div class="relative">
-          <input #addressInput type="text" [(ngModel)]="address" placeholder="Search for your building, street..." 
-                 class="w-full bg-gray-50 border-none rounded-2xl py-5 pl-12 pr-4 focus:ring-2 focus:ring-teal-500 transition-all font-medium">
-          <lucide-icon [name]="MapPinIcon" class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5"></lucide-icon>
+      <!-- Collection Address -->
+      <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-50">
+        <div class="flex items-center gap-3 mb-8">
+            <div class="w-8 h-8 bg-slate-900 text-white rounded-lg flex items-center justify-center">
+                <lucide-icon [name]="MapPinIcon" class="w-4 h-4"></lucide-icon>
+            </div>
+            <h3 class="text-lg font-black text-slate-900">Collection Address</h3>
+        </div>
+        <div class="relative group">
+          <input type="text" [(ngModel)]="address" placeholder="Flat No, Building Name, Street..." 
+                 class="w-full bg-slate-50 border-none rounded-2xl py-5 pl-12 pr-4 focus:ring-2 focus:ring-brand-teal transition-all font-bold text-slate-800 placeholder:text-slate-300">
+          <lucide-icon [name]="MapPinIcon" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 w-5 h-5 group-focus-within:text-brand-teal transition-colors"></lucide-icon>
         </div>
       </div>
 
-      <!-- Slot Selection -->
-      <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-50">
-        <h3 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
-          <lucide-icon [name]="CalendarIcon" class="w-5 h-5 text-teal-600"></lucide-icon>
-          Select Date & Slot
-        </h3>
+      <!-- Date & Slot Picker -->
+      <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-50">
+        <div class="flex items-center gap-3 mb-8">
+            <div class="w-8 h-8 bg-slate-900 text-white rounded-lg flex items-center justify-center">
+                <lucide-icon [name]="CalendarIcon" class="w-4 h-4"></lucide-icon>
+            </div>
+            <h3 class="text-lg font-black text-slate-900">Preferred Slot</h3>
+        </div>
         
-        <div class="flex gap-3 overflow-x-auto pb-4 mb-6 scrollbar-hide">
+        <!-- Horizontal Date Picker (Instagram Style) -->
+        <div class="flex gap-4 overflow-x-auto pb-4 mb-8 scrollbar-hide">
           <button *ngFor="let d of dates" 
                   (click)="selectedDate = d.date"
-                  [class]="selectedDate === d.date ? 'bg-teal-600 text-white shadow-lg shadow-teal-100' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'"
-                  class="flex flex-col items-center min-w-[80px] py-4 rounded-2xl transition-all">
-            <span class="text-[10px] font-bold uppercase opacity-60">{{d.day}}</span>
-            <span class="text-sm font-black">{{d.date}}</span>
+                  [class]="selectedDate === d.date ? 'bg-brand-teal text-white shadow-lg shadow-brand-teal/20 scale-105' : 'bg-slate-50 text-slate-400 hover:bg-slate-100'"
+                  class="flex-shrink-0 flex flex-col items-center min-w-[90px] py-5 rounded-2xl transition-all duration-300">
+            <span class="text-[10px] font-black uppercase tracking-tighter mb-1">{{d.day}}</span>
+            <span class="text-base font-black">{{d.date}}</span>
           </button>
         </div>
 
-        <div class="space-y-3">
+        <!-- Grid Slots -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <button *ngFor="let slot of slots" 
                   (click)="selectedSlot = slot"
-                  [class]="selectedSlot === slot ? 'border-teal-600 bg-teal-50 text-teal-700' : 'border-gray-100 bg-white text-gray-600 hover:bg-gray-50'"
-                  class="w-full text-left p-4 rounded-2xl border-2 transition-all font-bold flex items-center justify-between">
+                  [class]="selectedSlot === slot ? 'bg-brand-teal text-white shadow-lg shadow-brand-teal/20' : 'bg-white border-2 border-slate-50 text-slate-700 hover:border-slate-100'"
+                  class="w-full text-left p-4 rounded-2xl transition-all font-black flex items-center justify-between text-sm group">
             <div class="flex items-center gap-3">
-              <lucide-icon [name]="ClockIcon" class="w-5 h-5 opacity-40"></lucide-icon>
+              <lucide-icon [name]="ClockIcon" class="w-4 h-4" [class.text-white]="selectedSlot === slot" [class.text-slate-300]="selectedSlot !== slot"></lucide-icon>
               {{slot}}
             </div>
-            <div *ngIf="selectedSlot === slot" class="w-5 h-5 bg-teal-600 rounded-full flex items-center justify-center">
-              <lucide-icon [name]="NextIcon" class="w-3 h-3 text-white"></lucide-icon>
+            <div *ngIf="selectedSlot === slot" class="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center">
+                <lucide-icon [name]="NextIcon" class="w-3 h-3 text-white"></lucide-icon>
             </div>
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Right Column: Summary -->
-    <div class="lg:col-span-1">
-      <div class="bg-gray-900 text-white rounded-[2.5rem] p-8 shadow-2xl sticky top-8">
-        <h2 class="text-xl font-bold mb-8">Bill Summary</h2>
+    <!-- Right Column: Bill Summary (Sticky) -->
+    <div class="lg:col-span-1 sticky top-32">
+      <div class="bg-slate-900 rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden">
+        <!-- Abstract Glow -->
+        <div class="absolute -top-10 -right-10 w-40 h-40 bg-brand-teal/20 rounded-full blur-[80px]"></div>
         
-        <div class="space-y-4 mb-8">
-          <div class="flex justify-between text-gray-400 text-sm">
-            <span>Item Total</span>
-            <span class="text-white font-bold">₹{{selectedTest?.price}}</span>
+        <h2 class="text-xl font-black text-white mb-8 border-b border-slate-800 pb-4">Order Summary</h2>
+        
+        <div class="space-y-5 mb-10">
+          <div class="flex justify-between items-center">
+            <span class="text-slate-400 text-sm font-bold">Base Price</span>
+            <span class="text-white font-black font-mono">₹{{selectedTest?.price || 0}}</span>
           </div>
-          <div class="flex justify-between text-gray-400 text-sm">
-            <span>Collection Charges</span>
-            <span class="text-green-400 font-bold uppercase">FREE</span>
+          <div class="flex justify-between items-center">
+            <span class="text-slate-400 text-sm font-bold">Home Collection</span>
+            <span class="text-emerald-400 text-[10px] font-black uppercase tracking-widest bg-emerald-500/10 px-2 py-1 rounded-md">Free</span>
           </div>
-          <div class="flex justify-between text-gray-400 text-sm">
-            <span>Safety Fee</span>
-            <span class="text-white font-bold">₹20</span>
+          <div class="flex justify-between items-center">
+            <span class="text-slate-400 text-sm font-bold">Safety & Hygiene</span>
+            <span class="text-white font-black font-mono">₹20</span>
           </div>
         </div>
 
-        <div class="border-t border-gray-800 pt-6 mb-10">
+        <div class="bg-slate-800/50 rounded-2xl p-6 mb-10">
           <div class="flex justify-between items-center mb-2">
-            <span class="text-lg font-bold text-gray-400">Total Amount</span>
-            <span class="text-3xl font-black">₹{{(selectedTest?.price || 0) + 20}}</span>
+            <span class="text-sm font-bold text-slate-400">Total payable</span>
+            <span class="text-3xl font-black text-white font-mono">₹{{(selectedTest?.price || 0) + 20}}</span>
           </div>
-          <p class="text-[10px] text-teal-400 font-bold uppercase tracking-widest">Inclusive of all taxes</p>
+          <p class="text-[10px] text-brand-teal font-black uppercase tracking-[0.2em] animate-pulse">Inclusive of GST</p>
         </div>
 
         <button (click)="placeOrder()"
-                class="w-full bg-teal-600 text-white py-5 rounded-[1.5rem] font-black text-lg hover:bg-teal-500 transition-all shadow-xl shadow-teal-900/40 active:scale-95">
-          Proceed to Pay
+                [disabled]="!selectedSlot || !address"
+                [class.opacity-50]="!selectedSlot || !address"
+                class="w-full bg-brand-teal text-white py-5 rounded-2xl font-black text-lg hover:bg-brand-teal/80 transition-all shadow-xl shadow-brand-teal/20 active:scale-95 flex items-center justify-center gap-3">
+          Pay ₹{{(selectedTest?.price || 0) + 20}}
+          <lucide-icon [name]="NextIcon" class="w-5 h-5"></lucide-icon>
         </button>
         
-        <p class="text-center text-[10px] text-gray-500 mt-6">Secure encrypted payment powered by Agnihotri Labs</p>
+        <div class="mt-8 flex items-center justify-center gap-2 opacity-30">
+            <lucide-icon [name]="CardIcon" class="w-3 h-3 text-white"></lucide-icon>
+            <span class="text-[8px] text-white font-black uppercase tracking-widest">Encrypted Checkout</span>
+        </div>
+      </div>
+      
+      <!-- Support Brief -->
+      <div class="mt-6 flex items-center gap-4 px-6">
+          <div class="w-2 h-2 rounded-full bg-brand-teal animate-ping"></div>
+          <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Support available 24/7</p>
       </div>
     </div>
   </div>

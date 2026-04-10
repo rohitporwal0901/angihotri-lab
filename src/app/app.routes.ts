@@ -25,6 +25,18 @@ export const routes: Routes = [
     loadComponent: () => import('./features/booking/checkout/checkout.component').then(m => m.CheckoutComponent)
   },
   {
+    path: 'admin',
+    canActivate: [authGuard, roleGuard],
+    data: { role: 'Admin' },
+    loadComponent: () => import('./features/admin/admin-dashboard.component').then(m => m.AdminDashboardComponent)
+  },
+  {
+    path: 'technician',
+    canActivate: [authGuard, roleGuard],
+    data: { role: 'Technician' },
+    loadComponent: () => import('./features/technician/technician-dashboard.component').then(m => m.TechnicianDashboardComponent)
+  },
+  {
     path: 'booking/:id',
     canActivate: [authGuard],
     loadComponent: () => import('./features/booking/booking-details/booking-details.component').then(m => m.BookingDetailsComponent)

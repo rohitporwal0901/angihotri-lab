@@ -1,87 +1,154 @@
 <!-- Hero Section -->
-<section class="mb-10">
-  <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+<section class="mb-12">
+  <div class="relative bg-white rounded-[2.5rem] p-6 md:p-12 shadow-[0_20px_50px_rgba(0,136,168,0.05)] border border-brand-teal/5 overflow-hidden">
+    <!-- Background Gradient Soft -->
+    <div class="absolute -top-20 -right-20 w-80 h-80 bg-brand-teal/5 rounded-full blur-3xl"></div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-2 items-center gap-10 relative z-10">
+      <div class="order-2 lg:order-1">
+        <div class="inline-flex items-center gap-2 bg-brand-mint text-brand-teal px-4 py-2 rounded-2xl text-xs font-black mb-6 uppercase tracking-wider">
+          <span class="w-2 h-2 rounded-full bg-brand-teal animate-pulse"></span>
+          Accurate & Reliable Diagnostics
+        </div>
+        <h2 class="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 leading-[1.1] mb-6">
+          Premium Lab Tests <br> <span class="text-brand-teal">at Home</span>
+        </h2>
+        <p class="text-slate-500 text-base md:text-lg mb-8 max-w-md leading-relaxed font-medium">
+          Get certified laboratory results from the comfort of your home. Professional collection, fast processing.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <button *ngIf="!(authService.user$ | async)" routerLink="/login" 
+                  class="bg-brand-teal text-white px-8 py-4 rounded-2xl font-black text-base hover:bg-brand-dark transition-all shadow-lg shadow-brand-teal/20 hover:scale-[1.02]">
+            Get Started
+          </button>
+          <button *ngIf="authService.user$ | async" (click)="goToDashboard()" 
+                  class="bg-brand-teal text-white px-8 py-4 rounded-2xl font-black text-base hover:bg-brand-dark transition-all shadow-lg shadow-brand-teal/20 hover:scale-[1.02]">
+            My Dashboard
+          </button>
+          <button routerLink="/tests" class="bg-slate-900 text-white px-8 py-4 rounded-2xl font-black text-base hover:bg-black transition-all shadow-lg shadow-slate-200 hover:scale-[1.02]">
+            Book a Slot
+          </button>
+        </div>
+      </div>
+      <div class="relative order-1 lg:order-2">
+        <div class="relative z-10 overflow-hidden rounded-[2rem] shadow-2xl transition-all duration-500 hover:shadow-brand-teal/10">
+          <img src="assets/images/hero.png" alt="Diagnostics" class="w-full aspect-video lg:aspect-square object-cover">
+        </div>
+        <!-- Success Float -->
+        <div class="absolute -bottom-6 -left-6 z-20 bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-white flex items-center gap-4 animate-bounce-slow">
+            <div class="w-10 h-10 bg-green-500 text-white rounded-xl flex items-center justify-center shadow-lg shadow-green-200">
+                <lucide-icon [name]="ArrowIcon" class="w-5 h-5 -rotate-45"></lucide-icon>
+            </div>
+            <div>
+                <p class="text-[10px] text-slate-400 font-bold uppercase">Certified</p>
+                <p class="text-sm font-black text-slate-900">100% Secure</p>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Category Story Line -->
+<section class="mb-12 overflow-hidden">
+  <div class="flex items-center justify-between mb-6 px-2">
+    <h3 class="text-lg font-black text-slate-900 uppercase tracking-tighter">Health Focus</h3>
+  </div>
+  <div class="flex gap-4 overflow-x-auto pb-6 scrollbar-hide px-2">
+    <button *ngFor="let cat of categories$ | async" 
+            (click)="setCategory(cat.name)"
+            class="flex-shrink-0 flex flex-col items-center gap-3 transition-all duration-300">
+      <div [class]="(selectedCategory === cat.name ? 'ring-2 ring-brand-teal ring-offset-4' : '') + ' w-16 h-16 rounded-[1.5rem] p-0.5 bg-gradient-to-tr from-brand-teal to-blue-400'">
+        <div class="w-full h-full bg-white rounded-[1.3rem] flex items-center justify-center group">
+          <lucide-icon [name]="cat.icon" class="w-7 h-7" [class.text-brand-teal]="selectedCategory === cat.name" [class.text-slate-400]="selectedCategory !== cat.name"></lucide-icon>
+        </div>
+      </div>
+      <span class="text-[10px] font-black uppercase tracking-widest" [class.text-brand-teal]="selectedCategory === cat.name" [class.text-slate-400]="selectedCategory !== cat.name">{{cat.name}}</span>
+    </button>
+  </div>
+</section>
+
+<!-- Tests Section -->
+<section class="mb-12">
+  <div class="flex items-center justify-between mb-8 px-2">
     <div>
-      <p class="text-teal-600 font-semibold mb-2">Welcome back, Rohit! 👋</p>
-      <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight">
-        Taking care of your health <br class="hidden md:block"> is now much easier.
-      </h2>
+      <h3 class="text-2xl font-black text-slate-900 leading-none mb-2">Recommended Tests</h3>
+      <p class="text-slate-400 text-sm font-bold">Top picks for {{selectedCategory}}</p>
     </div>
-    <div class="relative w-full md:w-96">
-      <input type="text" placeholder="Search for tests (e.g. CBC, Vitamin D)" 
-             class="w-full bg-white border border-gray-100 rounded-2xl py-4 pl-12 pr-4 shadow-sm focus:ring-2 focus:ring-teal-500 transition-all">
-      <lucide-icon [name]="SearchIcon" class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5"></lucide-icon>
+    <div class="relative hidden sm:block">
+        <input type="text" placeholder="Search tests..." class="bg-slate-50 border-none rounded-xl py-3 pl-10 pr-4 text-sm w-48 focus:ring-1 focus:ring-brand-teal transition-all">
+        <lucide-icon [name]="SearchIcon" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4"></lucide-icon>
     </div>
   </div>
-</section>
 
-<!-- Categories -->
-<section class="mb-10">
-  <div class="flex items-center justify-between mb-6">
-    <h3 class="text-xl font-bold text-gray-800">Categories</h3>
-    <button class="text-teal-600 font-semibold flex items-center gap-1 hover:underline">
-      View all <lucide-icon [name]="ArrowIcon" class="w-4 h-4"></lucide-icon>
-    </button>
-  </div>
-  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-    <button *ngFor="let cat of categories" 
-            class="flex flex-col items-center gap-3 p-6 bg-white border border-gray-50 rounded-3xl hover:shadow-md transition-all group">
-      <div [class]="cat.color + ' w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform'">
-        <lucide-icon [name]="cat.icon" class="w-6 h-6"></lucide-icon>
-      </div>
-      <span class="font-medium text-gray-700">{{cat.name}}</span>
-    </button>
-  </div>
-</section>
-
-<!-- Popular Tests -->
-<section class="mb-10">
-  <div class="flex items-center justify-between mb-6">
-    <h3 class="text-xl font-bold text-gray-800">Popular Health Schemes</h3>
-    <button class="text-teal-600 font-semibold flex items-center gap-1 hover:underline">
-      View all
-    </button>
-  </div>
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <div *ngFor="let test of popularTests" 
-         class="bg-white border border-gray-50 rounded-[2rem] p-6 shadow-sm hover:shadow-xl transition-all group">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div *ngFor="let test of filteredTests$ | async" 
+         class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-50 flex flex-col group hover:shadow-xl hover:shadow-brand-teal/5 transition-all duration-500">
       <div class="flex justify-between items-start mb-4">
-        <div class="bg-teal-50 text-teal-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-          Best Seller
-        </div>
-        <div class="text-gray-400">
-          <lucide-icon [name]="ArrowIcon" class="w-5 h-5 -rotate-45"></lucide-icon>
-        </div>
+        <span class="text-[10px] font-black text-brand-teal bg-brand-mint px-3 py-1.5 rounded-lg uppercase tracking-tight">
+          {{test.category}}
+        </span>
+        <button class="text-slate-200 hover:text-brand-teal transition-colors">
+            <lucide-icon [name]="ArrowIcon" class="w-5 h-5 -rotate-45"></lucide-icon>
+        </button>
       </div>
-      <h4 class="text-lg font-bold text-gray-800 mb-2">{{test.name}}</h4>
-      <p class="text-gray-500 text-sm mb-6">Includes 72 parameters. Reports in {{test.duration}}.</p>
-      
-      <div class="flex items-end justify-between">
+
+      <h4 class="text-lg font-black text-slate-900 group-hover:text-brand-teal transition-colors mb-2">{{test.name}}</h4>
+      <p class="text-slate-400 text-xs font-medium mb-6 line-clamp-2 leading-relaxed">{{test.description}}</p>
+
+      <div class="mt-auto flex items-center justify-between pt-6 border-t border-slate-50">
         <div>
-          <span class="text-2xl font-black text-gray-900">₹{{test.price}}</span>
-          <span class="text-gray-400 line-through ml-2 text-sm">₹{{test.originalPrice}}</span>
-          <p class="text-green-600 text-xs font-bold">{{test.discount}}% OFF</p>
+            <div class="flex items-center gap-2 mb-1">
+                <span class="text-2xl font-black text-slate-900 font-mono">₹{{test.price}}</span>
+                <span *ngIf="test.originalPrice" class="text-slate-300 line-through text-xs font-bold">₹{{test.originalPrice}}</span>
+            </div>
+            <p *ngIf="test.discount" class="text-emerald-500 text-[10px] font-black uppercase tracking-widest bg-emerald-50 px-2 py-0.5 rounded-md inline-block">{{test.discount}}% Limited Discount</p>
         </div>
-        <button class="bg-teal-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-teal-700 transition-colors shadow-lg shadow-teal-100">
-          Book Now
+        <button [routerLink]="['/checkout']" [queryParams]="{testId: test.id}"
+                class="bg-slate-900 text-white px-6 py-3 rounded-xl font-black text-sm hover:bg-brand-teal transition-all shadow-md group-hover:px-8">
+          Book
         </button>
       </div>
     </div>
   </div>
+  
+  <div *ngIf="!(filteredTests$ | async)?.length" class="text-center py-20 bg-white rounded-[2rem] border border-dashed border-slate-200">
+    <lucide-icon [name]="SearchIcon" class="w-12 h-12 text-slate-100 mx-auto mb-4"></lucide-icon>
+    <p class="font-black text-slate-400 uppercase tracking-widest text-xs">No tests found in this category</p>
+  </div>
 </section>
 
+<!-- Action Banner -->
+<section class="mb-10">
+  <div class="bg-brand-teal rounded-[2rem] p-8 md:p-12 relative overflow-hidden shadow-2xl shadow-brand-teal/20">
+    <div class="relative z-10">
+        <h3 class="text-3xl md:text-4xl font-black text-white mb-4 leading-none">Need Help? <br> <span class="text-brand-dark">Talk to our experts.</span></h3>
+        <p class="text-brand-mint text-sm font-bold mb-8 max-w-sm">Get free consultation on which test is right for you.</p>
+        <button class="bg-white text-brand-teal px-8 py-3.5 rounded-xl font-black text-base hover:bg-brand-mint transition-all shadow-lg">
+            Connect on WhatsApp
+        </button>
+    </div>
+    <!-- Abstract Icon BG -->
+    <div class="absolute right-0 top-0 bottom-0 flex items-center pr-10 opacity-10 pointer-events-none">
+        <lucide-icon [name]="ArrowIcon" class="w-64 h-64 -rotate-45 text-white"></lucide-icon>
+    </div>
+  </div>
+</section>
 <!-- Promo Banner -->
-<section class="mb-4">
-  <div class="bg-teal-900 rounded-[2.5rem] p-10 relative overflow-hidden text-white">
-    <div class="relative z-10 max-w-md">
-      <h3 class="text-3xl font-bold mb-4">Flat 50% OFF on <br> Your First Booking!</h3>
-      <p class="text-teal-200 mb-8 font-medium">Use code <span class="text-white bg-teal-800 px-3 py-1 rounded-lg">AGNI50</span> at checkout.</p>
-      <button class="bg-white text-teal-900 px-8 py-4 rounded-2xl font-bold hover:bg-gray-100 transition-colors">
+<section class="mb-10">
+  <div class="bg-brand-dark rounded-[3rem] p-12 md:p-20 relative overflow-hidden text-white shadow-2xl">
+    <div class="relative z-10 max-w-xl">
+      <span class="bg-white/10 text-white px-4 py-2 rounded-full text-sm font-bold mb-6 inline-block backdrop-blur-md">Special Offer</span>
+      <h3 class="text-4xl md:text-6xl font-black mb-6 leading-tight">Flat 50% OFF on <br> <span class="text-brand-teal">Your First Booking!</span></h3>
+      <p class="text-teal-100 text-lg md:text-xl mb-10 font-medium">Use code <span class="text-white bg-white/20 border border-white/30 px-4 py-2 rounded-xl mx-1">AGNI50</span> at checkout.</p>
+      <button routerLink="/tests" class="bg-white text-brand-dark px-10 py-5 rounded-2xl font-bold text-lg hover:bg-brand-mint transition-all shadow-xl">
         Check Health Packages
       </button>
     </div>
-    <div class="absolute right-0 bottom-0 top-0 w-1/2 opacity-20 pointer-events-none">
-        <lucide-icon [name]="ArrowIcon" class="w-full h-full text-white"></lucide-icon>
+    <!-- Abstract Shapes -->
+    <div class="absolute right-0 top-0 w-1/2 h-full opacity-10 pointer-events-none overflow-hidden">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border-[40px] border-white rounded-full"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border-[20px] border-white rounded-full"></div>
     </div>
   </div>
 </section>

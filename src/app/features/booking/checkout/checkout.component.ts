@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, MapPin, Calendar, Clock, CreditCard, ChevronRight } from 'lucide-angular';
 import { DatabaseService } from '../../../core/services/database.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { LabTest } from '../../../core/models/test.model';
+import { AppUser } from '../../../core/models/user.model';
 import { ActivatedRoute, Router } from '@angular/router';
 
 
@@ -15,6 +18,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class CheckoutComponent implements OnInit {
   private dbService = inject(DatabaseService);
+  private authService = inject(AuthService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
@@ -26,30 +30,41 @@ export class CheckoutComponent implements OnInit {
   readonly CardIcon = CreditCard;
   readonly NextIcon = ChevronRight;
 
-  selectedTest: any = null;
+  selectedTest: LabTest | null = null;
   address: string = '';
   selectedDate: string = '';
   selectedSlot: string = '';
+  user: AppUser | null = null;
 
-  dates = [
-    { day: 'Mon', date: '12 Apr' },
-    { day: 'Tue', date: '13 Apr' },
-    { day: 'Wed', date: '14 Apr' },
-    { day: 'Thu', date: '15 Apr' },
-  ];
-
+  dates: { day: string; date: string; full: Date }[] = [];
   slots = ['06:00 - 07:00 AM', '07:00 - 08:00 AM', '08:00 - 09:00 AM', '09:00 - 10:00 AM', '10:00 - 11:00 AM'];
 
   ngOnInit() {
+    this.generateDates();
+    this.authService.user$.subscribe(u => this.user = u);
+    
     const testId = this.route.snapshot.queryParamMap.get('testId');
     if (testId) {
-      // In real app, fetch from db
-      this.selectedTest = { id: testId, name: 'Vitamin D (25-Hydroxy)', price: 1200 };
+      this.dbService.getTests().subscribe(tests => {
+        this.selectedTest = tests.find(t => t.id === testId) || null;
+      });
     }
   }
 
-  ngAfterViewInit() {
-    this.initAutocomplete();
+  generateDates() {
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    for (let i = 0; i < 7; i++) {
+        const d = new Date();
+        d.setDate(d.getDate() + i);
+        this.dates.push({
+            day: days[d.getDay()],
+            date: d.getDate() + ' ' + months[d.getMonth()],
+            full: d
+        });
+    }
+    this.selectedDate = this.dates[0].date;
   }
 
   initAutocomplete() {
@@ -59,18 +74,23 @@ export class CheckoutComponent implements OnInit {
   }
 
   async placeOrder() {
-    if (!this.address || !this.selectedDate || !this.selectedSlot) {
+    if (!this.address || !this.selectedDate || !this.selectedSlot || !this.selectedTest) {
       alert('Please fill all details');
       return;
     }
 
-    const booking = {
-      userId: 'user123',
-      customerName: 'Rohit',
-      customerPhone: '9876543210',
+    if (!this.user) {
+        alert('Please login first');
+        return;
+    }
+
+    const booking: any = {
+      userId: this.user.uid,
+      customerName: this.user.displayName,
+      customerPhone: this.user.phoneNumber || '',
       tests: [this.selectedTest],
       totalAmount: this.selectedTest.price,
-      status: 'Pending' as const,
+      status: 'Pending',
       address: {
         fullAddress: this.address,
         lat: 28.6139,
@@ -82,7 +102,6 @@ export class CheckoutComponent implements OnInit {
 
     try {
       await this.dbService.createBooking(booking);
-      alert('Booking successful!');
       this.router.navigate(['/profile']);
     } catch (e) {
       console.error(e);

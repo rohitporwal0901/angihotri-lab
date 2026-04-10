@@ -1,10 +1,10 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideAngularModule, User, MapPin, ChevronRight, ClipboardList } from 'lucide-angular';
-import { DatabaseService } from '../../../core/services/database.service';
-import { Observable, of } from 'rxjs';
-import { Booking } from '../../../core/models/booking.model';
 import { RouterModule } from '@angular/router';
+import { LucideAngularModule, User, List, ChevronRight } from 'lucide-angular';
+import { DatabaseService } from '../../../core/services/database.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { Observable, of, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-profile',
@@ -15,13 +15,16 @@ import { RouterModule } from '@angular/router';
 })
 export class ProfileComponent implements OnInit {
   private dbService = inject(DatabaseService);
-
+  public authService = inject(AuthService);
+  
   readonly UserIcon = User;
-  readonly MapPinIcon = MapPin;
+  readonly ListIcon = List;
   readonly NextIcon = ChevronRight;
-  readonly ListIcon = ClipboardList;
 
-  bookings$: Observable<Booking[]> = this.dbService.getUserBookings('user123');
+  bookings$: Observable<any[]> = this.authService.user$.pipe(
+    switchMap(user => user ? this.dbService.getUserBookings(user.uid) : of([]))
+  );
 
-  ngOnInit() {}
+  ngOnInit() {
+  }
 }

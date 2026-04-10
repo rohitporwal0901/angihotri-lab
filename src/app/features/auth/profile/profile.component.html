@@ -1,55 +1,81 @@
-<div class="max-w-4xl mx-auto">
-  <header class="mb-10">
-    <h1 class="text-3xl font-black text-gray-900 mb-2">My Profile</h1>
-    <p class="text-gray-500">Manage your health records and bookings.</p>
+<div class="max-w-4xl mx-auto py-8 lg:py-12 px-4">
+  <header class="mb-12">
+    <h1 class="text-3xl md:text-4xl font-black text-slate-900 mb-2 leading-none">Health Dashboard</h1>
+    <p class="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Your Records & Upcoming Appointments</p>
   </header>
 
-  <!-- User Info -->
-  <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-gray-50 mb-10 flex items-center gap-6">
-    <div class="w-20 h-20 bg-teal-100 rounded-3xl flex items-center justify-center text-teal-600">
-      <lucide-icon [name]="UserIcon" class="w-10 h-10"></lucide-icon>
-    </div>
-    <div>
-      <h2 class="text-2xl font-bold text-gray-900">Rohit</h2>
-      <p class="text-gray-500">+91 98765 43210</p>
+  <!-- User Card Premium -->
+  <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-brand-teal/5 mb-12 relative overflow-hidden group">
+    <div class="absolute top-0 right-0 w-40 h-40 bg-brand-teal/5 rounded-full -mr-20 -mt-20 group-hover:scale-110 transition-transform"></div>
+    <div class="relative z-10 flex items-center gap-6">
+        <div class="w-20 h-20 bg-brand-mint text-brand-teal rounded-[2rem] flex items-center justify-center shadow-lg shadow-brand-teal/5">
+            <lucide-icon [name]="UserIcon" class="w-10 h-10"></lucide-icon>
+        </div>
+        <div *ngIf="authService.user$ | async as user">
+            <h2 class="text-2xl font-black text-slate-900 mb-1">{{user.displayName}}</h2>
+            <div class="flex items-center gap-3">
+                <span class="text-slate-400 text-sm font-bold">{{user.email}}</span>
+                <span class="w-1 h-1 bg-slate-200 rounded-full"></span>
+                <span class="text-brand-teal text-[10px] font-black uppercase tracking-widest px-2 py-1 bg-brand-mint rounded-lg">{{user.role}}</span>
+            </div>
+        </div>
     </div>
   </div>
 
   <!-- Bookings Section -->
-  <div>
-    <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-      <lucide-icon [name]="ListIcon" class="w-6 h-6 text-teal-600"></lucide-icon>
-      Recent Bookings
-    </h3>
+  <section>
+    <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-slate-900 text-white rounded-lg flex items-center justify-center shadow-md">
+                <lucide-icon [name]="ListIcon" class="w-4 h-4"></lucide-icon>
+            </div>
+            <h3 class="text-xl font-black text-slate-900">Appointment History</h3>
+        </div>
+    </div>
     
     <div class="space-y-4">
       <div *ngFor="let booking of bookings$ | async" 
            [routerLink]="['/booking', booking.id]"
-           class="bg-white p-6 rounded-[2rem] border border-gray-50 hover:shadow-xl hover:border-teal-100 transition-all cursor-pointer group">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-4">
-            <div class="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400 group-hover:bg-teal-50 group-hover:text-teal-600 transition-colors">
-              <lucide-icon [name]="ListIcon" class="w-6 h-6"></lucide-icon>
+           class="bg-white p-6 rounded-[2.2rem] border border-slate-50 hover:shadow-xl hover:shadow-brand-teal/5 transition-all cursor-pointer group flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+        
+        <div class="flex items-center gap-5">
+            <div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300 group-hover:bg-brand-mint group-hover:text-brand-teal transition-all">
+                <lucide-icon [name]="ListIcon" class="w-7 h-7"></lucide-icon>
             </div>
             <div>
-              <p class="font-bold text-gray-900">{{booking.tests[0].name}}</p>
-              <p class="text-xs text-gray-500">{{booking.scheduledDate}} • {{booking.scheduledSlot}}</p>
+                <h4 class="text-lg font-black text-slate-900 group-hover:text-brand-teal transition-colors">{{booking.tests[0].name}}</h4>
+                <div class="flex items-center gap-2 text-slate-400 text-xs font-bold mt-0.5">
+                    <span class="uppercase">{{booking.scheduledDate}}</span>
+                    <span>•</span>
+                    <span>{{booking.scheduledSlot}}</span>
+                </div>
             </div>
-          </div>
-          <div class="flex items-center gap-4">
-            <div class="text-right hidden sm:block">
-              <p class="text-xs font-black uppercase tracking-widest text-teal-600">{{booking.status}}</p>
-              <p class="text-sm font-bold text-gray-900">₹{{booking.totalAmount}}</p>
+        </div>
+
+        <div class="flex items-center justify-between sm:justify-end gap-6 sm:border-l sm:border-slate-50 sm:pl-8">
+            <div class="text-left sm:text-right">
+                <span class="text-[10px] font-black uppercase tracking-widest" 
+                      [class.text-amber-500]="booking.status === 'Pending'"
+                      [class.text-emerald-500]="booking.status === 'Completed'">
+                    {{booking.status}}
+                </span>
+                <p class="text-lg font-black text-slate-900 font-mono">₹{{booking.totalAmount}}</p>
             </div>
-            <lucide-icon [name]="NextIcon" class="w-6 h-6 text-gray-300 group-hover:text-teal-600 transition-colors"></lucide-icon>
-          </div>
+            <div class="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-200 group-hover:bg-brand-teal group-hover:text-white transition-all shadow-sm">
+                <lucide-icon [name]="NextIcon" class="w-5 h-5"></lucide-icon>
+            </div>
         </div>
       </div>
 
-      <div *ngIf="!(bookings$ | async)?.length" class="text-center py-20 bg-gray-50 rounded-[2.5rem]">
-        <p class="text-gray-400 font-medium">No bookings found yet.</p>
-        <button [routerLink]="['/tests']" class="mt-4 text-teal-600 font-bold hover:underline">Browse Tests</button>
+      <div *ngIf="!(bookings$ | async)?.length" class="text-center py-24 bg-white rounded-[3rem] border border-dashed border-slate-100 flex flex-col items-center">
+        <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-6">
+            <lucide-icon [name]="ListIcon" class="w-10 h-10 text-slate-200"></lucide-icon>
+        </div>
+        <p class="text-slate-400 font-black uppercase tracking-[0.2em] text-xs">No health records found</p>
+        <button [routerLink]="['/tests']" class="mt-8 bg-brand-teal text-white px-8 py-3.5 rounded-xl font-black text-sm shadow-xl shadow-brand-teal/10 hover:scale-105 transition-all">
+            Book Your First Test
+        </button>
       </div>
     </div>
-  </div>
+  </section>
 </div>

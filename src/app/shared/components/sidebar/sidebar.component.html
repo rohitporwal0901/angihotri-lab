@@ -1,45 +1,42 @@
-<div class="flex flex-col h-full w-64 bg-white border-r border-gray-100 shadow-sm">
-  <div class="p-6">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 bg-teal-600 rounded-xl flex items-center justify-center text-white">
-        <lucide-icon [name]="TrackingIcon" class="w-6 h-6"></lucide-icon>
-      </div>
-      <h1 class="text-xl font-bold text-gray-800 tracking-tight">Agnihotri <span class="text-teal-600">Lab</span></h1>
+<div class="hidden md:flex flex-col h-full w-72 bg-slate-900 p-8 transition-all relative overflow-hidden">
+  <!-- Brand -->
+  <div class="flex items-center gap-3 mb-12 relative z-10 px-2">
+    <div class="w-10 h-10 bg-brand-teal rounded-xl flex items-center justify-center text-white shadow-lg shadow-brand-teal/20">
+      <span class="font-black">AL</span>
+    </div>
+    <div class="flex flex-col">
+        <span class="text-lg font-black text-white tracking-tight leading-none">Agnihotri</span>
+        <span class="text-brand-teal text-[10px] font-black uppercase tracking-[0.2em]">Medical Lab</span>
     </div>
   </div>
 
-  <nav class="flex-1 px-4 space-y-2 mt-4">
-    <a *ngFor="let item of menuItems" 
+  <!-- Menu -->
+  <nav class="flex-1 space-y-2 relative z-10">
+    <a *ngFor="let item of menuItems$ | async" 
        [routerLink]="item.route" 
-       routerLinkActive="bg-teal-50 text-teal-700 font-semibold"
+       routerLinkActive="bg-brand-teal/10 text-brand-teal ring-1 ring-brand-teal/20"
        [routerLinkActiveOptions]="{exact: true}"
-       class="flex items-center gap-3 px-4 py-3 text-gray-600 rounded-xl hover:bg-gray-50 transition-all duration-200 group">
-      <lucide-icon [name]="item.icon" class="w-5 h-5 group-hover:text-teal-600 transition-colors"></lucide-icon>
-      <span>{{item.label}}</span>
+       class="flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-400 font-black text-sm hover:bg-white/5 hover:text-white transition-all group">
+      <lucide-icon [name]="item.icon" class="w-5 h-5 group-hover:scale-110 transition-transform"></lucide-icon>
+      {{item.label}}
     </a>
   </nav>
 
-  <div class="p-4 border-t border-gray-50">
-    <ng-container *ngIf="authService.user$ | async as user; else noUser">
-      <div class="bg-gray-50 p-4 rounded-2xl flex items-center gap-3 group relative cursor-pointer" (click)="authService.logout()">
-        <div class="w-10 h-10 bg-gray-200 rounded-full overflow-hidden">
-          <img [src]="user.photoURL || 'https://ui-avatars.com/api/?name=' + user.displayName + '&background=0d9488&color=fff'" alt="User">
+  <!-- Logout Section -->
+  <div *ngIf="authService.user$ | async as user" class="pt-8 border-t border-slate-800 relative z-10">
+    <div class="flex items-center gap-4 mb-6 px-2">
+        <div class="w-10 h-10 rounded-xl bg-brand-teal/20 flex items-center justify-center text-brand-teal font-black">
+            {{user.displayName.substring(0,1)}}
         </div>
-        <div class="flex-1 overflow-hidden">
-          <p class="text-sm font-semibold text-gray-800 truncate">{{user.displayName}}</p>
-          <p class="text-xs text-gray-500 truncate">{{user.role}}</p>
+        <div class="flex-1 min-w-0">
+            <p class="text-sm font-black text-white truncate">{{user.displayName}}</p>
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{{user.role}}</p>
         </div>
-        <div class="absolute inset-0 bg-red-600/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl flex items-center justify-center">
-            <span class="text-xs font-bold text-red-600">Logout</span>
-        </div>
-      </div>
-    </ng-container>
-    <ng-template #noUser>
-      <button routerLink="/login" 
-              class="w-full flex items-center justify-center gap-2 py-4 bg-teal-600 text-white rounded-2xl font-bold shadow-lg shadow-teal-100 hover:bg-teal-700 transition-all">
-        <lucide-icon [name]="LoginIcon" class="w-5 h-5"></lucide-icon>
-        Sign In
-      </button>
-    </ng-template>
+    </div>
+    <button (click)="authService.logout()" 
+            class="w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-red-400 font-black text-sm hover:bg-red-500/10 transition-all group">
+      <lucide-icon [name]="LogoutIcon" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></lucide-icon>
+      Sign Out
+    </button>
   </div>
 </div>
