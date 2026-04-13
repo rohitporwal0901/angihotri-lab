@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { LucideAngularModule, Search, ArrowRight, FlaskConical, Activity, Microscope, Heart, Thermometer, ShieldCheck, MapPin, Clock, Info, CheckCircle, Award, Brain, Pill, Droplets, Stethoscope, Gauge } from 'lucide-angular';
+import { LucideAngularModule, Search, ArrowRight, FlaskConical, Activity, Microscope, Heart, Thermometer, ShieldCheck, MapPin, Clock, Info, CheckCircle, Award, Brain, Pill, Droplets, Stethoscope, Gauge, Home, ClipboardList, Settings, User, PlusSquare, Smartphone, Zap, Star } from 'lucide-angular';
 import { FormsModule } from '@angular/forms';
 import { DatabaseService } from '../../core/services/database.service';
 import { AuthService } from '../../core/services/auth.service';
@@ -34,6 +34,14 @@ export class HomeComponent implements OnInit {
   readonly DropletIcon = Droplets;
   readonly ScopeIcon = Stethoscope;
   readonly GaugeIcon = Gauge;
+  readonly HomeIcon = Home;
+  readonly ListIcon = ClipboardList;
+  readonly SettingsIcon = Settings;
+  readonly UserIcon = User;
+  readonly PlusIcon = PlusSquare;
+  readonly PhoneIcon = Smartphone;
+  readonly ZapIcon = Zap;
+  readonly StarIcon = Star;
 
   searchQuery = '';
 
