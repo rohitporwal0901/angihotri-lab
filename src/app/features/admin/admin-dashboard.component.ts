@@ -4,14 +4,16 @@ import { LucideAngularModule, LayoutDashboard, Microscope, Users, Plus, ArrowUpR
 import { DatabaseService } from '../../core/services/database.service';
 import { Observable } from 'rxjs';
 import { AddTechnicianComponent } from './add-technician/add-technician.component';
+import { AddTestComponent } from './add-test/add-test.component';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, AddTechnicianComponent],
+  imports: [CommonModule, LucideAngularModule, AddTechnicianComponent, AddTestComponent],
   template: `
     <div class="max-w-7xl mx-auto py-8 px-4">
       <app-add-technician *ngIf="showAddTech" (close)="showAddTech = false" (success)="showAddTech = false"></app-add-technician>
+      <app-add-test *ngIf="showAddTest" (close)="showAddTest = false" (success)="showAddTest = false"></app-add-test>
       <header class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
             <h1 class="text-3xl font-black text-slate-900 mb-2 leading-none">Admin Control</h1>
@@ -21,7 +23,7 @@ import { AddTechnicianComponent } from './add-technician/add-technician.componen
             <button (click)="showAddTech = true" class="bg-white text-slate-900 px-6 py-3 rounded-2xl font-black text-sm border border-slate-100 shadow-sm hover:bg-slate-50 transition-all flex items-center gap-2">
                 <lucide-icon [name]="PlusIcon" class="w-4 h-4"></lucide-icon> New Technician
             </button>
-            <button class="bg-brand-teal text-white px-6 py-3 rounded-2xl font-black text-sm shadow-lg shadow-brand-teal/20 hover:scale-[1.02] transition-all flex items-center gap-2">
+            <button (click)="showAddTest = true" class="bg-brand-teal text-white px-6 py-3 rounded-2xl font-black text-sm shadow-lg shadow-brand-teal/20 hover:scale-[1.02] transition-all flex items-center gap-2">
                 <lucide-icon [name]="PlusIcon" class="w-4 h-4"></lucide-icon> Add Test
             </button>
         </div>
@@ -139,6 +141,7 @@ export class AdminDashboardComponent {
   private dbService = inject(DatabaseService);
 
   public showAddTech = false;
+  public showAddTest = false;
 
   readonly DashIcon = LayoutDashboard;
   readonly MicroscopeIcon = Microscope;

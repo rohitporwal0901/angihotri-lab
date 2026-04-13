@@ -1,7 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { LucideAngularModule, Search, ArrowRight, FlaskConical, Activity, Microscope, Heart, Thermometer } from 'lucide-angular';
+import { LucideAngularModule, Search, ArrowRight, FlaskConical, Activity, Microscope, Heart, Thermometer, ShieldCheck, MapPin, Clock, Info, CheckCircle, Award, Brain, Pill, Droplets, Stethoscope, Gauge } from 'lucide-angular';
+import { FormsModule } from '@angular/forms';
 import { DatabaseService } from '../../core/services/database.service';
 import { AuthService } from '../../core/services/auth.service';
 import { Observable, map } from 'rxjs';
@@ -10,7 +11,7 @@ import { LabTest } from '../../core/models/test.model';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, RouterModule],
+  imports: [CommonModule, LucideAngularModule, RouterModule, FormsModule],
   templateUrl: './home.component.html',
   styles: []
 })
@@ -21,6 +22,20 @@ export class HomeComponent implements OnInit {
 
   readonly SearchIcon = Search;
   readonly ArrowIcon = ArrowRight;
+  readonly MapPinIcon = MapPin;
+  readonly ClockIcon = Clock;
+  readonly InfoIcon = Info;
+  readonly CheckIcon = CheckCircle;
+  readonly ShieldIcon = ShieldCheck;
+  readonly AwardIcon = Award;
+  readonly FlaskConical = FlaskConical;
+  readonly BrainIcon = Brain;
+  readonly PillIcon = Pill;
+  readonly DropletIcon = Droplets;
+  readonly ScopeIcon = Stethoscope;
+  readonly GaugeIcon = Gauge;
+
+  searchQuery = '';
 
   tests$: Observable<LabTest[]> = this.dbService.getTests();
   categories$: Observable<any[]> = this.dbService.getCategories().pipe(
@@ -34,20 +49,33 @@ export class HomeComponent implements OnInit {
     })
   );
   filteredTests$!: Observable<LabTest[]>;
+  popularTests$!: Observable<LabTest[]>;
   selectedCategory: string = 'All';
 
   private defaultCategories = [
     { name: 'All', icon: FlaskConical, color: 'bg-gray-50 text-gray-600' },
-    { name: 'Full Body', icon: FlaskConical, color: 'bg-blue-50 text-blue-600' },
     { name: 'Diabetes', icon: Activity, color: 'bg-red-50 text-red-600' },
-    { name: 'Kidney', icon: Microscope, color: 'bg-purple-50 text-purple-600' },
     { name: 'Heart', icon: Heart, color: 'bg-orange-50 text-orange-600' },
-    { name: 'Infection', icon: Thermometer, color: 'bg-teal-50 text-teal-600' },
+    { name: 'Kidney', icon: Microscope, color: 'bg-purple-50 text-purple-600' },
+    { name: 'Brain', icon: Brain, color: 'bg-blue-50 text-blue-600' },
+    { name: 'Liver', icon: Droplets, color: 'bg-amber-50 text-amber-600' },
   ];
 
   ngOnInit() {
+    this.updateFilter();
+    this.popularTests$ = this.tests$.pipe(
+      map(tests => tests.filter(t => t.popular).slice(0, 6))
+    );
+  }
+
+  updateFilter() {
     this.filteredTests$ = this.tests$.pipe(
-      map(tests => tests.filter(t => this.selectedCategory === 'All' || t.category === this.selectedCategory))
+      map(tests => tests.filter(t => {
+        const matchesCategory = this.selectedCategory === 'All' || t.category === this.selectedCategory;
+        const matchesSearch = t.name.toLowerCase().includes(this.searchQuery.toLowerCase()) || 
+                             t.description.toLowerCase().includes(this.searchQuery.toLowerCase());
+        return matchesCategory && matchesSearch;
+      }))
     );
   }
 
@@ -77,9 +105,11 @@ export class HomeComponent implements OnInit {
 
   setCategory(cat: string) {
     this.selectedCategory = cat;
-    this.filteredTests$ = this.tests$.pipe(
-      map(tests => tests.filter(t => this.selectedCategory === 'All' || t.category === this.selectedCategory))
-    );
+    this.updateFilter();
+  }
+
+  onSearchChange() {
+    this.updateFilter();
   }
 
   goToDashboard() {

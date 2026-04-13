@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Auth, authState, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, User as FirebaseUser } from '@angular/fire/auth';
-import { Firestore, doc, setDoc, docData } from '@angular/fire/firestore';
+import { Firestore, doc, setDoc, onSnapshot } from '@angular/fire/firestore';
 import { Observable, of } from 'rxjs';
 import { switchMap, map, shareReplay, take } from 'rxjs/operators';
 import { AppUser, UserRole } from '../models/user.model';
@@ -14,10 +14,20 @@ export class AuthService {
   private firestore = inject(Firestore);
   private router = inject(Router);
 
+  // Helper patterns from physio-app
+  private docToObservable<T>(docRef: any): Observable<T> {
+    return new Observable<T>(subscriber => {
+      return onSnapshot(docRef, (snapshot: any) => {
+        subscriber.next(snapshot.data() as T);
+      }, (error: any) => subscriber.error(error));
+    });
+  }
+
   user$: Observable<AppUser | null> = authState(this.auth).pipe(
     switchMap(fbUser => {
       if (fbUser) {
-        return (docData(doc(this.firestore, `Users/${fbUser.uid}`) as any) as Observable<AppUser>).pipe(
+        const userDocRef = doc(this.firestore, `Users/${fbUser.uid}`);
+        return this.docToObservable<AppUser>(userDocRef).pipe(
           map(user => user ? { ...user, uid: fbUser.uid } : null)
         );
       } else {
@@ -44,7 +54,8 @@ export class AuthService {
 
   async login(email: string, pass: string) {
     const cred = await signInWithEmailAndPassword(this.auth, email, pass);
-    const userDoc = await (docData(doc(this.firestore, `Users/${cred.user.uid}`) as any) as Observable<AppUser>).pipe(take(1)).toPromise();
+    const userDocRef = doc(this.firestore, `Users/${cred.user.uid}`);
+    const userDoc = await this.docToObservable<AppUser>(userDocRef).pipe(take(1)).toPromise();
     if (userDoc) {
       this.navigateByRole(userDoc.role);
     }
@@ -56,7 +67,8 @@ export class AuthService {
     const fbUser = credential.user;
     
     // Check if user exists, if not save with role
-    const userDoc = await (docData(doc(this.firestore, `Users/${fbUser.uid}`) as any) as Observable<AppUser>).pipe(take(1)).toPromise();
+    const userDocRef = doc(this.firestore, `Users/${fbUser.uid}`);
+    const userDoc = await this.docToObservable<AppUser>(userDocRef).pipe(take(1)).toPromise();
     
     if (!userDoc) {
       const user: AppUser = {

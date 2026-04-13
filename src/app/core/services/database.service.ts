@@ -1,5 +1,18 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, collection, collectionData, doc, docData, setDoc, updateDoc, query, where, orderBy, Timestamp } from '@angular/fire/firestore';
+import { 
+  Firestore, 
+  collection, 
+  doc, 
+  setDoc, 
+  updateDoc, 
+  query, 
+  where, 
+  orderBy, 
+  Timestamp, 
+  getDoc,
+  onSnapshot,
+  increment
+} from '@angular/fire/firestore';
 import { Database, ref, set, onValue, update } from '@angular/fire/database';
 import { Observable, from, map } from 'rxjs';
 import { Booking } from '../models/booking.model';
@@ -14,55 +27,84 @@ export class DatabaseService {
   private firestore = inject(Firestore);
   private rtdb = inject(Database);
 
+  // Helper used in physio-app to avoid collectionData issues
+  private collectionToObservable<T>(q: any, idField: string = 'id'): Observable<T[]> {
+    return new Observable<T[]>(subscriber => {
+      return onSnapshot(q, (snapshot: any) => {
+        const data = snapshot.docs.map((d: any) => ({
+          [idField]: d.id,
+          ...d.data()
+        })) as T[];
+        subscriber.next(data);
+      }, (error: any) => subscriber.error(error));
+    });
+  }
+
+  private docToObservable<T>(docRef: any, idField: string = 'id'): Observable<T> {
+    return new Observable<T>(subscriber => {
+      return onSnapshot(docRef, (snapshot: any) => {
+        if (snapshot.exists()) {
+          subscriber.next({ [idField]: snapshot.id, ...snapshot.data() } as T);
+        } else {
+          subscriber.next(null as any);
+        }
+      }, (error: any) => subscriber.error(error));
+    });
+  }
+
   // Tests Catalog
   getTests(): Observable<LabTest[]> {
     const testsRef = collection(this.firestore, 'Tests_Catalog');
-    return collectionData(testsRef, { idField: 'id' }) as Observable<LabTest[]>;
+    const q = query(testsRef);
+    return this.collectionToObservable<LabTest>(q);
   }
 
   getCategories(): Observable<any[]> {
     const catRef = collection(this.firestore, 'Categories');
-    return collectionData(catRef, { idField: 'id' }) as Observable<any[]>;
+    return this.collectionToObservable<any>(catRef);
   }
 
   addTest(test: Partial<LabTest>): Promise<void> {
-    const testId = doc(collection(this.firestore, 'Tests_Catalog') as any).id;
-    return setDoc(doc(this.firestore, 'Tests_Catalog', testId) as any, { ...test, id: testId });
+    const testsRef = collection(this.firestore, 'Tests_Catalog');
+    const testId = doc(testsRef).id;
+    return setDoc(doc(this.firestore, 'Tests_Catalog', testId), { ...test, id: testId });
   }
 
   // Bookings
   createBooking(booking: Partial<Booking>): Promise<void> {
-    const bookingId = doc(collection(this.firestore, 'Bookings') as any).id;
+    const bookingsRef = collection(this.firestore, 'Bookings');
+    const bookingId = doc(bookingsRef).id;
     const finalBooking = {
       ...booking,
       id: bookingId,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now()
     };
-    return setDoc(doc(this.firestore, 'Bookings', bookingId) as any, finalBooking);
+    return setDoc(doc(this.firestore, 'Bookings', bookingId), finalBooking);
   }
 
   getUserBookings(userId: string): Observable<Booking[]> {
     const bookingsRef = collection(this.firestore, 'Bookings');
     const q = query(bookingsRef, where('userId', '==', userId), orderBy('createdAt', 'desc'));
-    return collectionData(q, { idField: 'id' }) as Observable<Booking[]>;
+    return this.collectionToObservable<Booking>(q);
   }
 
   getBookingById(id: string): Observable<Booking> {
     const bookingRef = doc(this.firestore, 'Bookings', id);
-    return docData(bookingRef as any) as Observable<Booking>;
+    return this.docToObservable<Booking>(bookingRef);
   }
 
   // Users & Technicians
   getTechnicians(): Observable<AppUser[]> {
     const usersRef = collection(this.firestore, 'Users');
     const q = query(usersRef, where('role', '==', 'Technician'));
-    return collectionData(q, { idField: 'uid' }) as Observable<AppUser[]>;
+    return this.collectionToObservable<AppUser>(q, 'uid');
   }
 
   // Dashboard Stats (Real-time)
   getAdminStats(): Observable<any> {
-    return collectionData(collection(this.firestore, 'Bookings')).pipe(
+    const bookingsRef = collection(this.firestore, 'Bookings');
+    return this.collectionToObservable<any>(bookingsRef).pipe(
       map(bookings => ({
         totalBookings: bookings.length,
         pendingBookings: bookings.filter((b: any) => b.status === 'Pending').length,
@@ -75,18 +117,18 @@ export class DatabaseService {
   getAllBookings(): Observable<Booking[]> {
     const bookingsRef = collection(this.firestore, 'Bookings');
     const q = query(bookingsRef, orderBy('createdAt', 'desc'));
-    return collectionData(q, { idField: 'id' }) as Observable<Booking[]>;
+    return this.collectionToObservable<Booking>(q);
   }
 
   getTechnicianBookings(techId: string): Observable<Booking[]> {
     const bookingsRef = collection(this.firestore, 'Bookings');
     const q = query(bookingsRef, where('technicianId', '==', techId), orderBy('createdAt', 'desc'));
-    return collectionData(q, { idField: 'id' }) as Observable<Booking[]>;
+    return this.collectionToObservable<Booking>(q);
   }
 
   updateBooking(id: string, data: Partial<Booking>): Promise<void> {
     const bookingRef = doc(this.firestore, 'Bookings', id);
-    return updateDoc(bookingRef as any, { ...data, updatedAt: Timestamp.now() });
+    return updateDoc(bookingRef, { ...data, updatedAt: Timestamp.now() });
   }
 
   updateBookingStatus(id: string, status: string): Promise<void> {
