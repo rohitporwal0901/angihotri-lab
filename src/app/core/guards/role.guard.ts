@@ -8,7 +8,8 @@ export const roleGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
   
-  const expectedRoles = route.data['roles'] as UserRole[];
+  const roles = route.data['roles'] || route.data['role'];
+  const expectedRoles = Array.isArray(roles) ? roles : roles ? [roles] : [];
 
   return authService.user$.pipe(
     take(1),

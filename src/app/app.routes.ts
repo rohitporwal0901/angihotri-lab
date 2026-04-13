@@ -27,13 +27,13 @@ export const routes: Routes = [
   {
     path: 'admin',
     canActivate: [authGuard, roleGuard],
-    data: { role: 'Admin' },
+    data: { roles: ['Admin'] },
     loadComponent: () => import('./features/admin/admin-dashboard.component').then(m => m.AdminDashboardComponent)
   },
   {
     path: 'technician',
     canActivate: [authGuard, roleGuard],
-    data: { role: 'Technician' },
+    data: { roles: ['Technician'] },
     loadComponent: () => import('./features/technician/technician-dashboard.component').then(m => m.TechnicianDashboardComponent)
   },
   {
