@@ -1,30 +1,20 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { LucideAngularModule, User, List, ChevronRight } from 'lucide-angular';
-import { DatabaseService } from '../../../core/services/database.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { Observable, of, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, RouterModule],
-  templateUrl: './profile.component.html',
-  styles: []
+  imports: [CommonModule],
+  template: `
+    <div class="p-12">
+      <h1 class="text-3xl font-black italic">Patient Area</h1>
+      <p class="text-slate-400 mt-2">Welcome to your diagnostic history portal.</p>
+      <button (click)="logout()" class="mt-8 px-6 py-3 bg-slate-900 text-white rounded-xl font-bold">Logout</button>
+    </div>
+  `
 })
-export class ProfileComponent implements OnInit {
-  private dbService = inject(DatabaseService);
-  public authService = inject(AuthService);
-  
-  readonly UserIcon = User;
-  readonly ListIcon = List;
-  readonly NextIcon = ChevronRight;
-
-  bookings$: Observable<any[]> = this.authService.user$.pipe(
-    switchMap(user => user ? this.dbService.getUserBookings(user.uid) : of([]))
-  );
-
-  ngOnInit() {
-  }
+export class ProfileComponent {
+    authService = inject(AuthService);
+    logout() { this.authService.logout(); }
 }

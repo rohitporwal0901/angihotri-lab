@@ -1,250 +1,168 @@
-<!-- ── APP-LIKE HERO SECTION ── -->
-<section class="relative min-h-[500px] flex flex-col justify-end px-4 pb-12 overflow-hidden rounded-b-[3rem] md:rounded-b-[5rem] hero-gradient">
-  <!-- Dynamic Background Image -->
-  <div class="absolute inset-0 -z-10 group overflow-hidden">
-    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1200" 
-         alt="Lab background" class="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-1000 opacity-20">
-    <div class="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent"></div>
-  </div>
+<div class="landing-page bg-white min-h-screen selection:bg-blue-100">
 
-  <div class="max-w-7xl mx-auto w-full space-y-8 animate-in fade-in slide-in-from-bottom-10 duration-1000">
+  <!-- ── NAVIGATION ── -->
+  <nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-400 h-20 flex items-center" 
+       [class.nav-scrolled]="navScrolled">
+    <div class="max-w-7xl mx-auto px-6 lg:px-12 w-full flex items-center justify-between">
+      <a href="#" class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-200">
+          <i-lucide name="flask-conical" class="text-white w-6 h-6"></i-lucide>
+        </div>
+        <span class="text-xl font-black text-slate-800 tracking-tighter uppercase">Agnihotri <span class="text-blue-600">Lab</span></span>
+      </a>
+
+      <div class="hidden md:flex items-center gap-10">
+        <a (click)="scrollToSection('services')" class="text-sm font-bold text-slate-500 hover:text-blue-600 cursor-pointer transition-colors">Services</a>
+        <a (click)="scrollToSection('how-it-works')" class="text-sm font-bold text-slate-500 hover:text-blue-600 cursor-pointer transition-colors">Process</a>
+        <a (click)="scrollToSection('faq')" class="text-sm font-bold text-slate-500 hover:text-blue-600 cursor-pointer transition-colors">FAQs</a>
+        <div class="h-4 w-px bg-slate-200"></div>
+        <ng-container *ngIf="isAuthChecking; else authContent">
+            <div class="w-20 h-8 bg-slate-100 animate-pulse rounded-lg"></div>
+        </ng-container>
+        <ng-template #authContent>
+            <button *ngIf="!isLoggedIn" (click)="goToLogin()" class="text-sm font-black text-slate-800 hover:text-blue-600">Login</button>
+            <button (click)="isLoggedIn ? goToDashboard() : goToRegister()" 
+                    class="btn-primary py-2.5 px-6 rounded-xl text-white text-sm font-black shadow-lg shadow-blue-500/20">
+              {{ isLoggedIn ? 'My Account' : 'Book Home Visit' }}
+            </button>
+        </ng-template>
+      </div>
+
+      <button (click)="toggleMobileMenu()" class="md:hidden p-2 text-slate-600">
+        <i-lucide [name]="mobileMenuOpen ? 'x' : 'menu'" class="w-5 h-5"></i-lucide>
+      </button>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu absolute top-20 left-0 right-0 bg-white border-b border-slate-100 shadow-xl" [class.mobile-menu--open]="mobileMenuOpen">
+        <div class="p-6 space-y-4">
+          <a (click)="scrollToSection('services')" class="block text-lg font-bold text-slate-900">Services</a>
+          <a (click)="scrollToSection('how-it-works')" class="block text-lg font-bold text-slate-900">Process</a>
+          <div class="pt-4 border-t border-slate-100">
+              <button *ngIf="!isLoggedIn" (click)="goToLogin()" class="w-full py-3 text-slate-900 font-bold border border-slate-200 rounded-xl mb-3">Sign In</button>
+              <button (click)="isLoggedIn ? goToDashboard() : goToRegister()" class="w-full py-3 btn-primary text-white font-bold rounded-xl">
+                  {{ isLoggedIn ? 'Dashboard' : 'Book Test' }}
+              </button>
+          </div>
+        </div>
+    </div>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <section class="relative pt-32 pb-20 overflow-hidden bg-slate-50/50">
+    <div class="absolute top-0 right-0 w-1/3 h-full bg-blue-50/50 -skew-x-12 translate-x-20 pointer-events-none"></div>
+    <div class="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div class="reveal space-y-8">
+                <div class="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-full border border-blue-100">
+                    <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
+                    <span class="text-[10px] font-black text-blue-600 uppercase tracking-widest leading-none">NABL ACCREDITED</span>
+                </div>
+                <h1 class="text-5xl lg:text-[5.5rem] font-black text-slate-900 tracking-tighter leading-[0.95]">
+                    Your Path to <br> <span class="text-gradient italic">Better Health</span> <br> 
+                    <span class="text-slate-400 text-3xl font-bold tracking-tight">starts here.</span>
+                </h1>
+                <p class="text-slate-500 font-medium text-lg leading-relaxed max-w-lg">
+                    ISO-certified diagnostics at your service. Experience precision, transparency, and clinical excellence with Agnihotri Lab.
+                </p>
+                <div class="flex flex-wrap gap-4 pt-4">
+                    <button (click)="goToRegister()" class="btn-primary px-10 py-5 rounded-[2rem] text-white font-black shadow-2xl">Get the Best Care</button>
+                    <button class="px-10 py-5 rounded-[2rem] border-2 border-slate-200 text-slate-900 font-black hover:bg-white transition-all">About Our Lab</button>
+                </div>
+            </div>
+            <div class="reveal relative">
+                <img src="https://cdni.iconscout.com/illustration/premium/thumb/female-doctor-illustration-download-in-svg-png-gif-file-formats--medical-care-physician-health-specialist-woman-pack-professionals-illustrations-4545814.png" 
+                     class="w-full h-auto animate-float drop-shadow-2xl" alt="Medical">
+            </div>
+        </div>
+    </div>
+  </section>
+
+  <!-- ── STATS ── -->
+  <section class="relative z-10 -mt-12 px-6 max-w-7xl mx-auto stats-trigger">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8">
+        <div *ngFor="let stat of statCounters" 
+             class="stat-card bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 text-center hover:-translate-y-2 transition-all">
+            <h3 class="text-3xl lg:text-5xl font-black text-slate-900">{{stat.current}}{{stat.suffix}}</h3>
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">{{stat.label}}</p>
+        </div>
+    </div>
+  </section>
+
+  <!-- ── SERVICES ── -->
+  <section id="services" class="py-24 px-6 max-w-7xl mx-auto">
+    <div class="text-center space-y-4 mb-16 reveal">
+        <h2 class="text-4xl lg:text-6xl font-black text-slate-900 tracking-tighter italic">Diagnostic <span class="text-blue-600">Services</span></h2>
+        <p class="text-slate-400 font-medium">Equipped with the latest technology for precise results.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div *ngFor="let service of services" 
+             class="service-card reveal group bg-white border border-slate-100 rounded-[2.5rem] p-8 shadow-sm hover:shadow-2xl hover:border-blue-100 transition-all cursor-pointer">
+            <div [class]="'w-16 h-16 rounded-2xl bg-gradient-to-br ' + service.color + ' flex items-center justify-center mb-8 shadow-lg shadow-slate-200 group-hover:rotate-6 transition-transform'">
+                <i-lucide [name]="service.icon" class="text-white w-8 h-8"></i-lucide>
+            </div>
+            <h3 class="text-xl font-black text-slate-900 mb-2">{{service.title}}</h3>
+            <p class="text-slate-400 text-sm font-bold leading-relaxed mb-6">{{service.desc}}</p>
+            <div class="flex items-center gap-2 text-blue-600 font-black text-[10px] uppercase opacity-0 group-hover:opacity-100 transition-all">
+                Learn More <i-lucide name="arrow-right" class="w-3 h-3"></i-lucide>
+            </div>
+        </div>
+    </div>
+  </section>
+
+  <!-- ── FAQS ── -->
+  <section id="faq" class="py-24 max-w-4xl mx-auto px-6">
+    <div class="text-center mb-16 reveal">
+        <h3 class="text-3xl lg:text-5xl font-black text-slate-900 tracking-tighter italic">Common <span class="text-blue-600">Questions</span></h3>
+    </div>
     <div class="space-y-4">
-        <div class="inline-flex items-center gap-2 glass px-4 py-2 rounded-full border border-brand-teal/10">
-            <span class="flex h-2 w-2 rounded-full bg-brand-teal animate-ping"></span>
-            <span class="text-[10px] font-black uppercase tracking-widest text-brand-teal">Available in Delhi, Noida & Gurgaon</span>
+        <div *ngFor="let faq of faqs; let i = index" class="reveal">
+            <div (click)="toggleFaq(i)" class="bg-slate-50 p-7 rounded-[2rem] flex items-center justify-between cursor-pointer hover:bg-blue-50 transition-all select-none">
+                <span class="text-sm lg:text-lg font-black text-slate-800">{{faq.q}}</span>
+                <i-lucide [name]="openFaqIndex === i ? 'minus' : 'plus'" class="w-5 h-5 text-slate-400"></i-lucide>
+            </div>
+            <div *ngIf="openFaqIndex === i" class="px-8 py-6 text-slate-500 font-bold text-sm">
+                {{faq.a}}
+            </div>
         </div>
-        <h1 class="text-4xl md:text-7xl font-black text-slate-900 leading-[1] tracking-tight">
-          Modern Health Checks <br> <span class="text-brand-teal italic text-glow">At Your Home.</span>
-        </h1>
-        <p class="text-slate-500 text-sm md:text-lg max-w-lg font-medium">
-          Premium diagnostic services with NABL certified results. Book from over 500+ tests today.
-        </p>
     </div>
+  </section>
 
-    <!-- Multi-Task Search Bar (Mobile First) -->
-    <div class="relative max-w-2xl group">
-      <div class="absolute -inset-1 bg-gradient-to-r from-brand-teal to-blue-400 rounded-3xl blur opacity-10 group-focus-within:opacity-25 transition duration-500"></div>
-      <div class="relative flex items-center bg-white rounded-3xl p-1.5 shadow-2xl shadow-brand-teal/10 border border-slate-100 overflow-hidden">
-        <div class="flex-1 flex items-center px-4 md:px-6">
-          <lucide-icon [name]="SearchIcon" class="w-5 h-5 text-slate-400 mr-3"></lucide-icon>
-          <input type="text" [(ngModel)]="searchQuery" (input)="onSearchChange()"
-                 placeholder="Search for tests or health issues..." 
-                 class="w-full py-4 bg-transparent border-none focus:ring-0 text-slate-900 text-sm font-bold placeholder-slate-300">
-        </div>
-        <button (click)="updateFilter()" 
-                class="bg-brand-teal text-white px-6 md:px-10 py-4 rounded-2xl font-black text-sm hover:bg-brand-dark transition-all shadow-lg active:scale-95 flex items-center gap-2">
-          <span>Book</span>
-          <lucide-icon [name]="ZapIcon" class="w-4 h-4"></lucide-icon>
-        </button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── QUICK SERVICES (APP STYLE CIRCLES) ── -->
-<section class="py-12 -mt-8 relative z-20">
-    <div class="max-w-7xl mx-auto px-4">
-        <div class="grid grid-cols-4 md:grid-cols-4 gap-4 md:gap-10">
-            <div class="flex flex-col items-center gap-2 group cursor-pointer" (click)="setCategory('All')">
-                <div class="w-16 h-16 md:w-24 md:h-24 rounded-full bg-white shadow-xl shadow-brand-teal/5 flex items-center justify-center p-0.5 group-hover:scale-110 transition-transform premium-border">
-                    <div class="w-full h-full rounded-full bg-brand-mint flex items-center justify-center">
-                        <lucide-icon [name]="ScopeIcon" class="w-7 h-7 md:w-10 md:h-10 text-brand-teal"></lucide-icon>
-                    </div>
+  <!-- ── FOOTER ── -->
+  <footer class="bg-slate-900 text-white rounded-t-[3rem] px-6 lg:px-20 py-20 mt-24">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-12 lg:gap-20">
+        <div class="col-span-1 lg:col-span-2 space-y-8">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center">
+                    <i-lucide name="flask-conical" class="text-slate-900 w-6 h-6"></i-lucide>
                 </div>
-                <span class="text-[10px] md:text-xs font-black uppercase tracking-tight text-slate-600">Home Visit</span>
+                <span class="text-2xl font-black tracking-tighter uppercase">Agnihotri <span class="text-blue-400">Lab</span></span>
             </div>
-            <div class="flex flex-col items-center gap-2 group cursor-pointer">
-                <div class="w-16 h-16 md:w-24 md:h-24 rounded-full bg-white shadow-xl shadow-brand-teal/5 flex items-center justify-center p-0.5 group-hover:scale-110 transition-transform premium-border">
-                    <div class="w-full h-full rounded-full bg-blue-50 flex items-center justify-center">
-                        <lucide-icon [name]="MapPinIcon" class="w-7 h-7 md:w-10 md:h-10 text-blue-500"></lucide-icon>
-                    </div>
-                </div>
-                <span class="text-[10px] md:text-xs font-black uppercase tracking-tight text-slate-600">Lab Visit</span>
+            <p class="text-white/40 font-bold text-sm leading-relaxed max-w-xs">Laboratory excellence for modern healthcare. Accurate results, delivered on time.</p>
+        </div>
+        <div class="space-y-4">
+            <h5 class="text-[10px] font-black uppercase tracking-widest text-white/30">Connect</h5>
+            <div class="flex gap-4">
+                <i-lucide name="facebook" class="w-5 h-5 opacity-40 hover:opacity-100 transition-all cursor-pointer"></i-lucide>
+                <i-lucide name="instagram" class="w-5 h-5 opacity-40 hover:opacity-100 transition-all cursor-pointer"></i-lucide>
+                <i-lucide name="twitter" class="w-5 h-5 opacity-40 hover:opacity-100 transition-all cursor-pointer"></i-lucide>
             </div>
-            <div class="flex flex-col items-center gap-2 group cursor-pointer">
-                <div class="w-16 h-16 md:w-24 md:h-24 rounded-full bg-white shadow-xl shadow-brand-teal/5 flex items-center justify-center p-0.5 group-hover:scale-110 transition-transform premium-border">
-                    <div class="w-full h-full rounded-full bg-purple-50 flex items-center justify-center">
-                        <lucide-icon [name]="FlaskConical" class="w-7 h-7 md:w-10 md:h-10 text-purple-500"></lucide-icon>
-                    </div>
-                </div>
-                <span class="text-[10px] md:text-xs font-black uppercase tracking-tight text-slate-600">Radiology</span>
-            </div>
-            <div class="flex flex-col items-center gap-2 group cursor-pointer">
-                <div class="w-16 h-16 md:w-24 md:h-24 rounded-full bg-white shadow-xl shadow-brand-teal/5 flex items-center justify-center p-0.5 group-hover:scale-110 transition-transform premium-border">
-                    <div class="w-full h-full rounded-full bg-emerald-50 flex items-center justify-center">
-                        <lucide-icon [name]="ShieldIcon" class="w-7 h-7 md:w-10 md:h-10 text-emerald-500"></lucide-icon>
-                    </div>
-                </div>
-                <span class="text-[10px] md:text-xs font-black uppercase tracking-tight text-slate-600">Reports</span>
-            </div>
+        </div>
+        <div class="space-y-4">
+            <h5 class="text-[10px] font-black uppercase tracking-widest text-white/30">Privacy</h5>
+            <ul class="text-sm font-black opacity-40 space-y-2">
+                <li class="hover:opacity-100 cursor-pointer transition-all">Terms of Use</li>
+                <li class="hover:opacity-100 cursor-pointer transition-all">Privacy Policy</li>
+            </ul>
         </div>
     </div>
-</section>
-
-<!-- ── EXCLUSIVE OFFERS BANNER ── -->
-<section class="py-8 bg-white overflow-hidden">
-    <div class="max-w-7xl mx-auto px-4">
-        <div class="relative rounded-[2.5rem] bg-slate-900 h-48 md:h-64 flex items-center overflow-hidden group">
-            <div class="absolute left-0 top-0 w-full h-full opacity-30">
-                <img src="https://images.unsplash.com/photo-1579154235820-2f9540026e64?auto=format&fit=crop&q=80&w=1200" 
-                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-2000">
-            </div>
-            <div class="relative z-10 px-8 md:px-16 space-y-4">
-                <div class="inline-block bg-brand-teal text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">Limited Period Offer</div>
-                <h3 class="text-2xl md:text-4xl font-black text-white leading-tight">Full Body Checkup <br> <span class="text-brand-teal">at just ₹799!</span></h3>
-                <button class="bg-white text-slate-900 px-6 py-2.5 rounded-xl font-bold text-xs hover:bg-brand-teal hover:text-white transition-all uppercase tracking-widest">Book Now</button>
-            </div>
-            <div class="absolute right-[-10%] bottom-[-20%] w-64 h-64 bg-brand-teal/20 blur-3xl rounded-full"></div>
+    <div class="pt-16 mt-16 border-t border-white/5 flex flex-col lg:flex-row justify-between items-center gap-6">
+        <p class="text-[9px] font-black uppercase text-white/20 tracking-widest">© 2026 Agnihotri Lab. Diagnostic Excellence.</p>
+        <div class="flex gap-10 opacity-20 grayscale grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b9/NABL_logo.png" class="h-8">
+            <img src="https://www.iso.org/files/live/sites/isoorg/files/about%20ISO/branding/logo/iso-logo.png" class="h-8">
         </div>
     </div>
-</section>
+  </footer>
 
-<!-- ── VITAL ORGANS FOCUS (APP-LIKE SCROLL) ── -->
-<section class="py-12 bg-white">
-    <div class="max-w-7xl mx-auto px-4">
-        <div class="flex items-center justify-between mb-8">
-            <h2 class="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                <lucide-icon [name]="StarIcon" class="w-4 h-4 text-amber-500"></lucide-icon>
-                Check Focus Areas
-            </h2>
-            <button class="text-brand-teal font-black text-xs uppercase tracking-widest">See All</button>
-        </div>
-
-        <div class="flex gap-4 md:gap-10 overflow-x-auto no-scrollbar pb-4 -mx-4 px-4">
-            <button *ngFor="let cat of categories$ | async" 
-                    (click)="setCategory(cat.name)"
-                    class="flex-shrink-0 flex flex-col items-center gap-3 transition-all duration-300 group"
-                    [class.opacity-40]="selectedCategory !== cat.name && selectedCategory !== 'All'">
-                <div [class]="(selectedCategory === cat.name ? 'ring-2 ring-brand-teal ring-offset-2' : '') + ' w-14 md:w-20 h-14 md:h-20 rounded-2xl bg-white shadow-soft flex items-center justify-center border border-slate-50 group-hover:bg-brand-mint transition-all'">
-                    <lucide-icon [name]="cat.icon" class="w-6 md:w-9 h-6 md:h-9" 
-                                [class.text-brand-teal]="selectedCategory === cat.name" 
-                                [class.text-slate-400]="selectedCategory !== cat.name"></lucide-icon>
-                </div>
-                <span class="text-[10px] font-black uppercase tracking-tight text-slate-500 group-hover:text-brand-teal" 
-                      [class.text-brand-teal]="selectedCategory === cat.name">{{cat.name}}</span>
-            </button>
-        </div>
-    </div>
-</section>
-
-<!-- ── POPULAR PACKAGES (APP CARDS) ── -->
-<section class="py-16 bg-slate-50/50">
-  <div class="max-w-7xl mx-auto px-4">
-    <div class="mb-10">
-      <h2 class="text-2xl font-black text-slate-900 tracking-tight">Best Selling Packages</h2>
-      <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">NABL Certified & Accurate</p>
-    </div>
-
-    <div class="flex gap-6 overflow-x-auto no-scrollbar pb-10 -mx-4 px-4">
-      <div *ngFor="let test of popularTests$ | async" 
-           class="flex-shrink-0 w-[280px] md:w-[350px] bg-white rounded-[2.5rem] p-6 shadow-xl shadow-slate-200/50 flex flex-col group border border-white hover-lift">
-        
-        <div class="flex items-center justify-between mb-6">
-            <div class="w-12 h-12 bg-brand-mint text-brand-teal rounded-2xl flex items-center justify-center">
-                <lucide-icon [name]="FlaskConical" class="w-6 h-6"></lucide-icon>
-            </div>
-            <div *ngIf="test.discount" class="bg-red-500 text-white text-[8px] font-black px-3 py-1 rounded-full uppercase tracking-widest">
-              {{test.discount}}% OFF
-            </div>
-        </div>
-
-        <h4 class="text-lg font-black text-slate-900 mb-1 group-hover:text-brand-teal transition-colors">{{test.name}}</h4>
-        <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-6">{{test.category}} · {{test.sampleType}}</p>
-
-        <div class="space-y-3 mb-8">
-            <div class="flex items-center gap-2">
-                <lucide-icon [name]="CheckIcon" class="w-3 h-3 text-emerald-500"></lucide-icon>
-                <span class="text-[10px] font-bold text-slate-600">Covers 60+ parameters</span>
-            </div>
-            <div class="flex items-center gap-2">
-                <lucide-icon [name]="ClockIcon" class="w-3 h-3 text-brand-teal"></lucide-icon>
-                <span class="text-[10px] font-bold text-slate-400">Reports in {{test.reportTime || '24h'}}</span>
-            </div>
-        </div>
-
-        <div class="mt-auto flex items-center justify-between border-t border-slate-50 pt-6">
-            <div>
-                <span class="text-xl font-black text-slate-900 leading-none">₹{{test.price}}</span>
-                <span *ngIf="test.originalPrice" class="text-[10px] text-slate-300 line-through font-bold ml-2">₹{{test.originalPrice}}</span>
-            </div>
-            <button [routerLink]="['/checkout']" [queryParams]="{testId: test.id}"
-                    class="bg-brand-teal text-white w-10 h-10 rounded-xl flex items-center justify-center shadow-lg active:scale-90 group-hover:rotate-12 transition-all">
-              <lucide-icon [name]="PlusIcon" class="w-5 h-5"></lucide-icon>
-            </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── ALL TESTS GRID ── -->
-<section id="tests" class="py-20 bg-white">
-  <div class="max-w-7xl mx-auto px-4">
-    <div class="mb-12">
-        <h2 class="text-3xl font-black text-slate-900 tracking-tight leading-none">Diagnostic Catalog</h2>
-        <div class="flex items-center gap-2 mt-4 overflow-x-auto no-scrollbar">
-            <span class="px-4 py-1.5 rounded-full bg-slate-100 text-[10px] font-black uppercase text-slate-600 border border-slate-200 flex-shrink-0">Filter By {{selectedCategory}}</span>
-            <span class="px-4 py-1.5 rounded-full bg-brand-mint text-[10px] font-black uppercase text-brand-teal border border-brand-teal/10 flex-shrink-0">Accredited Labs</span>
-        </div>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      <div *ngFor="let test of filteredTests$ | async" 
-           class="bg-white rounded-[2rem] p-6 border border-slate-100 hover:shadow-2xl hover:border-brand-teal/20 transition-all group flex flex-col">
-        
-        <div class="flex items-center gap-4 mb-6">
-          <div class="w-12 h-12 bg-slate-50 text-brand-teal rounded-xl flex items-center justify-center transition-transform group-hover:rotate-6">
-            <lucide-icon [name]="ScopeIcon" class="w-6 h-6"></lucide-icon>
-          </div>
-          <div>
-            <h4 class="text-base font-black text-slate-900 leading-tight">{{test.name}}</h4>
-            <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest">{{test.category}}</span>
-          </div>
-        </div>
-
-        <p class="text-slate-400 text-xs font-medium mb-6 line-clamp-2">{{test.description}}</p>
-
-        <div class="grid grid-cols-2 gap-3 mb-6">
-            <div class="bg-slate-50/50 p-2 rounded-xl text-center border border-slate-100">
-                <p class="text-[7px] text-slate-400 font-extrabold uppercase mb-0.5">Report Time</p>
-                <p class="text-[10px] font-black text-slate-700">{{test.reportTime || '24h'}}</p>
-            </div>
-            <div class="bg-slate-50/50 p-2 rounded-xl text-center border border-slate-100">
-                <p class="text-[7px] text-slate-400 font-extrabold uppercase mb-0.5">Sample</p>
-                <p class="text-[10px] font-black text-slate-700">{{test.sampleType}}</p>
-            </div>
-        </div>
-
-        <div class="mt-auto flex items-center justify-between pt-4 border-t border-slate-50">
-          <span class="text-lg font-black text-slate-900">₹{{test.price}}</span>
-          <button [routerLink]="['/checkout']" [queryParams]="{testId: test.id}"
-                  class="text-brand-teal font-black text-[10px] uppercase tracking-widest flex items-center gap-1 group-hover:underline">
-            Book Now
-            <lucide-icon [name]="ArrowIcon" class="w-3 h-3 group-hover:translate-x-1 transition-transform"></lucide-icon>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── PRE-FOOTER (APP CTA) ── -->
-<section class="py-16 px-4">
-    <div class="max-w-7xl mx-auto rounded-[3.5rem] bg-brand-teal p-12 overflow-hidden relative group">
-        <div class="absolute inset-0 opacity-10 pointer-events-none">
-            <lucide-icon [name]="ScopeIcon" class="w-96 h-96 absolute top-[-50px] right-[-50px] rotate-[-20deg] group-hover:rotate-0 transition-transform duration-1000"></lucide-icon>
-        </div>
-        <div class="relative z-10 text-center space-y-8">
-            <h2 class="text-3xl md:text-5xl font-black text-white leading-tight">Better Health for Your <br> Family starts here.</h2>
-            <div class="flex flex-col md:flex-row items-center justify-center gap-4">
-                <button class="w-full md:w-auto bg-slate-950 text-white px-10 py-5 rounded-2xl font-black flex items-center justify-center gap-3 shadow-2xl active:scale-95 transition-all">
-                    <lucide-icon [name]="PhoneIcon" class="w-6 h-6"></lucide-icon>
-                    Get the App
-                </button>
-                <button class="w-full md:w-auto bg-white/10 backdrop-blur-xl border border-white/20 text-white px-10 py-5 rounded-2xl font-black shadow-xl hover:bg-white hover:text-brand-teal transition-all">
-                    Explore Tests
-                </button>
-            </div>
-        </div>
-    </div>
-</section>
+</div>

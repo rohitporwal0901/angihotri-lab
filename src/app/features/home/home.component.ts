@@ -1,126 +1,107 @@
-import { Component, OnInit, inject } from '@angular/core';
+import {
+    Component, inject, OnInit, OnDestroy, AfterViewInit,
+    HostListener, ChangeDetectorRef
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
-import { LucideAngularModule, Search, ArrowRight, FlaskConical, Activity, Microscope, Heart, Thermometer, ShieldCheck, MapPin, Clock, Info, CheckCircle, Award, Brain, Pill, Droplets, Stethoscope, Gauge, Home, ClipboardList, Settings, User, PlusSquare, Smartphone, Zap, Star } from 'lucide-angular';
 import { FormsModule } from '@angular/forms';
-import { DatabaseService } from '../../core/services/database.service';
+import { Router, RouterModule } from '@angular/router';
+import { LucideAngularModule } from 'lucide-angular';
 import { AuthService } from '../../core/services/auth.service';
-import { Observable, map } from 'rxjs';
-import { LabTest } from '../../core/models/test.model';
 
 @Component({
-  selector: 'app-home',
-  standalone: true,
-  imports: [CommonModule, LucideAngularModule, RouterModule, FormsModule],
-  templateUrl: './home.component.html',
-  styles: []
+    selector: 'app-home',
+    standalone: true,
+    imports: [CommonModule, FormsModule, RouterModule, LucideAngularModule],
+    templateUrl: './home.component.html',
+    styleUrl: './home.component.css'
 })
-export class HomeComponent implements OnInit {
-  private dbService = inject(DatabaseService);
-  public authService = inject(AuthService);
-  private router = inject(Router);
+export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
+    private router = inject(Router);
+    private cdr = inject(ChangeDetectorRef);
+    private authService = inject(AuthService);
 
-  readonly SearchIcon = Search;
-  readonly ArrowIcon = ArrowRight;
-  readonly MapPinIcon = MapPin;
-  readonly ClockIcon = Clock;
-  readonly InfoIcon = Info;
-  readonly CheckIcon = CheckCircle;
-  readonly ShieldIcon = ShieldCheck;
-  readonly AwardIcon = Award;
-  readonly FlaskConical = FlaskConical;
-  readonly BrainIcon = Brain;
-  readonly PillIcon = Pill;
-  readonly DropletIcon = Droplets;
-  readonly ScopeIcon = Stethoscope;
-  readonly GaugeIcon = Gauge;
-  readonly HomeIcon = Home;
-  readonly ListIcon = ClipboardList;
-  readonly SettingsIcon = Settings;
-  readonly UserIcon = User;
-  readonly PlusIcon = PlusSquare;
-  readonly PhoneIcon = Smartphone;
-  readonly ZapIcon = Zap;
-  readonly StarIcon = Star;
+    mobileMenuOpen = false;
+    navScrolled = false;
+    openFaqIndex: number | null = null;
+    isAuthChecking = true;
 
-  searchQuery = '';
+    statCounters = [
+        { label: 'Diagnostic Tests', numericValue: 350, current: 0, suffix: '+', animated: false },
+        { label: 'Years Experience', numericValue: 12, current: 0, suffix: '+', animated: false },
+        { label: 'Happy Patients', numericValue: 25000, current: 0, suffix: '+', animated: false },
+        { label: 'Collection Centers', numericValue: 15, current: 0, suffix: '+', animated: false },
+    ];
 
-  tests$: Observable<LabTest[]> = this.dbService.getTests();
-  categories$: Observable<any[]> = this.dbService.getCategories().pipe(
-    map(cats => {
-      if (cats.length === 0) return this.defaultCategories;
-      return cats.map(c => ({
-        ...c,
-        icon: this.getIcon(c.name),
-        color: this.getColor(c.name)
-      }));
-    })
-  );
-  filteredTests$!: Observable<LabTest[]>;
-  popularTests$!: Observable<LabTest[]>;
-  selectedCategory: string = 'All';
+    services = [
+        { icon: 'flask-conical', title: 'Pathology', desc: 'Accurate blood, urine, and body fluid diagnostics.', color: 'from-blue-500 to-indigo-600' },
+        { icon: 'microscope', title: 'Bio-Chemistry', desc: 'Analysis of hormones and metabolic markers.', color: 'from-teal-500 to-emerald-600' },
+        { icon: 'dna', title: 'Molecular Biology', desc: 'Viral load testing and genetic diagnostics.', color: 'from-indigo-500 to-violet-600' },
+        { icon: 'heart-pulse', title: 'Cardiology', desc: 'ECG and cardiac marker diagnostic panels.', color: 'from-rose-500 to-orange-500' },
+    ];
 
-  private defaultCategories = [
-    { name: 'All', icon: FlaskConical, color: 'bg-gray-50 text-gray-600' },
-    { name: 'Diabetes', icon: Activity, color: 'bg-red-50 text-red-600' },
-    { name: 'Heart', icon: Heart, color: 'bg-orange-50 text-orange-600' },
-    { name: 'Kidney', icon: Microscope, color: 'bg-purple-50 text-purple-600' },
-    { name: 'Brain', icon: Brain, color: 'bg-blue-50 text-blue-600' },
-    { name: 'Liver', icon: Droplets, color: 'bg-amber-50 text-amber-600' },
-  ];
+    faqs = [
+        { q: 'How do I book a home sample collection?', a: 'Book directly via the portal or call our helpline.' },
+        { q: 'When will I receive my digital reports?', a: 'Reports are released within 12-24 hours.' },
+        { q: 'Are your labs NABL accredited?', a: 'Yes, we are fully NABL and ISO certified.' },
+        { q: 'Can I reschedule my appointment?', a: 'Yes, up to 2 hours before pickup.' }
+    ];
 
-  ngOnInit() {
-    this.updateFilter();
-    this.popularTests$ = this.tests$.pipe(
-      map(tests => tests.filter(t => t.popular).slice(0, 6))
-    );
-  }
+    private observers: IntersectionObserver[] = [];
 
-  updateFilter() {
-    this.filteredTests$ = this.tests$.pipe(
-      map(tests => tests.filter(t => {
-        const matchesCategory = this.selectedCategory === 'All' || t.category === this.selectedCategory;
-        const matchesSearch = t.name.toLowerCase().includes(this.searchQuery.toLowerCase()) || 
-                             t.description.toLowerCase().includes(this.searchQuery.toLowerCase());
-        return matchesCategory && matchesSearch;
-      }))
-    );
-  }
+    get isLoggedIn() { return this.authService.isLoggedIn; }
+    get userRole() { return this.authService.currentUser?.role; }
 
-  getIcon(name: string) {
-    const map: any = {
-      'Diabetes': Activity,
-      'Kidney': Microscope,
-      'Heart': Heart,
-      'Infection': Thermometer,
-      'Full Body': FlaskConical,
-      'Vitamins': Microscope
-    };
-    return map[name] || FlaskConical;
-  }
+    @HostListener('window:scroll')
+    onScroll() {
+        this.navScrolled = window.scrollY > 30;
+    }
 
-  getColor(name: string) {
-    const map: any = {
-      'Diabetes': 'bg-red-50 text-red-600',
-      'Kidney': 'bg-purple-50 text-purple-600',
-      'Heart': 'bg-orange-50 text-orange-600',
-      'Infection': 'bg-teal-50 text-teal-600',
-      'Full Body': 'bg-blue-50 text-blue-600',
-      'Vitamins': 'bg-yellow-50 text-yellow-600'
-    };
-    return map[name] || 'bg-gray-50 text-gray-500';
-  }
+    ngOnInit() {
+        this.authService.user$.subscribe(user => {
+            this.isAuthChecking = false;
+            this.cdr.markForCheck();
+        });
+    }
 
-  setCategory(cat: string) {
-    this.selectedCategory = cat;
-    this.updateFilter();
-  }
+    ngAfterViewInit() {
+        this.setupScrollAnimations();
+    }
 
-  onSearchChange() {
-    this.updateFilter();
-  }
+    ngOnDestroy() {
+        this.observers.forEach(o => o.disconnect());
+    }
 
-  goToDashboard() {
-    this.router.navigate(['/profile']); // Based on role, this will diverge later
-  }
+    private setupScrollAnimations() {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            },
+            { threshold: 0.1 }
+        );
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        this.observers.push(observer);
+    }
+
+    animateCounters() {}
+
+    toggleFaq(index: number) {
+        this.openFaqIndex = this.openFaqIndex === index ? null : index;
+    }
+
+    scrollToSection(sectionId: string) {
+        const element = document.getElementById(sectionId);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    toggleMobileMenu() { this.mobileMenuOpen = !this.mobileMenuOpen; }
+    closeMobileMenu() { this.mobileMenuOpen = false; }
+    goToLogin() { this.router.navigate(['/login']); }
+    goToRegister() { this.router.navigate(['/signup']); }
+    goToDashboard() { this.router.navigate(['/profile']); }
 }

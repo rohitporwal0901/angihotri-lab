@@ -23,21 +23,34 @@ export class AuthService {
     });
   }
 
+  // Current Auth State
+  get isLoggedIn(): boolean {
+    return !!this.auth.currentUser;
+  }
+
+  // Current User Profile (sync access if needed)
+  currentUser: AppUser | null = null;
+
   user$: Observable<AppUser | null> = authState(this.auth).pipe(
     switchMap(fbUser => {
       if (fbUser) {
         const userDocRef = doc(this.firestore, `Users/${fbUser.uid}`);
         return this.docToObservable<AppUser>(userDocRef).pipe(
-          map(user => user ? { ...user, uid: fbUser.uid } : null)
+          map(user => {
+            const appUser = user ? { ...user, uid: fbUser.uid } : null;
+            this.currentUser = appUser;
+            return appUser;
+          })
         );
       } else {
+        this.currentUser = null;
         return of(null);
       }
     }),
     shareReplay(1)
   );
 
-  async signup(email: string, pass: string, name: string, role: UserRole = 'Patient', autoNavigate: boolean = true) {
+  async signup(email: string, pass: string, name: string, role: UserRole = 'user', autoNavigate: boolean = true) {
     const credential = await createUserWithEmailAndPassword(this.auth, email, pass);
     const user: AppUser = {
       uid: credential.user.uid,
@@ -61,7 +74,7 @@ export class AuthService {
     }
   }
 
-  async googleLogin(role: UserRole = 'Patient') {
+  async googleLogin(role: UserRole = 'user') {
     const provider = new GoogleAuthProvider();
     const credential = await signInWithPopup(this.auth, provider);
     const fbUser = credential.user;
@@ -88,10 +101,10 @@ export class AuthService {
 
   navigateByRole(role: UserRole) {
     switch (role) {
-      case 'Admin':
+      case 'admin':
         this.router.navigate(['/admin']);
         break;
-      case 'Technician':
+      case 'technician':
         this.router.navigate(['/technician']);
         break;
       default:

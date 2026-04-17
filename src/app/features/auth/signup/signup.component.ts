@@ -1,56 +1,54 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { LucideAngularModule, User, Mail, Lock, UserPlus, Chrome } from 'lucide-angular';
-import { AuthService } from '../../../core/services/auth.service';
-import { UserRole } from '../../../core/models/user.model';
 import { Router, RouterModule } from '@angular/router';
+import { LucideAngularModule } from 'lucide-angular';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, LucideAngularModule],
   templateUrl: './signup.component.html',
-  styles: []
+  styleUrl: './signup.component.css'
 })
 export class SignupComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  readonly UserIcon = User;
-  readonly MailIcon = Mail;
-  readonly LockIcon = Lock;
-  readonly SignupIcon = UserPlus;
-  readonly GoogleIcon = Chrome;
+  name = '';
+  email = '';
+  password = '';
+  phone = '';
+  loading = false;
+  error = '';
+  showPassword = false;
 
-  name: string = '';
-  email: string = '';
-  pass: string = '';
-  loading: boolean = false;
-  error: string = '';
-
-  async onSubmit() {
+  async signup() {
+    if (!this.email || !this.password || !this.name) {
+        this.error = 'Please fill all required fields.';
+        return;
+    }
     this.loading = true;
     this.error = '';
     try {
-      await this.authService.signup(this.email, this.pass, this.name);
-      this.router.navigate(['/']);
+      // Role defaults to 'user' for patients
+      await this.authService.signup(this.email, this.password, this.name, 'user');
     } catch (e: any) {
-      this.error = e.message;
+      this.error = e.message || 'Registration failed. Try again.';
     } finally {
       this.loading = false;
     }
   }
 
-  async googleSignup() {
-    this.loading = true;
-    try {
-      await this.authService.googleLogin();
-      this.router.navigate(['/']);
-    } catch (e: any) {
-      this.error = e.message;
-    } finally {
-      this.loading = false;
-    }
+  async loginWithGoogle() {
+      this.loading = true;
+      try {
+          await this.authService.googleLogin('user');
+      } catch (e) {
+          this.error = 'Google registration failed.';
+      } finally {
+          this.loading = false;
+      }
   }
 }

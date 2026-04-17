@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -16,34 +16,24 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/signup/signup.component').then(m => m.SignupComponent)
   },
   {
-    path: 'tests',
-    loadComponent: () => import('./features/tests/test-list/test-list.component').then(m => m.TestListComponent)
-  },
-  {
-    path: 'checkout',
-    canActivate: [authGuard],
-    loadComponent: () => import('./features/booking/checkout/checkout.component').then(m => m.CheckoutComponent)
-  },
-  {
     path: 'admin',
     canActivate: [authGuard, roleGuard],
-    data: { roles: ['Admin'] },
+    data: { roles: ['admin'] },
     loadComponent: () => import('./features/admin/admin-dashboard.component').then(m => m.AdminDashboardComponent)
   },
   {
     path: 'technician',
     canActivate: [authGuard, roleGuard],
-    data: { roles: ['Technician'] },
+    data: { roles: ['technician'] },
     loadComponent: () => import('./features/technician/technician-dashboard.component').then(m => m.TechnicianDashboardComponent)
-  },
-  {
-    path: 'booking/:id',
-    canActivate: [authGuard],
-    loadComponent: () => import('./features/booking/booking-details/booking-details.component').then(m => m.BookingDetailsComponent)
   },
   {
     path: 'profile',
     canActivate: [authGuard],
     loadComponent: () => import('./features/auth/profile/profile.component').then(m => m.ProfileComponent)
+  },
+  {
+    path: '**',
+    redirectTo: ''
   }
 ];

@@ -1,0 +1,58 @@
+<div class="flex h-screen bg-slate-50 overflow-hidden">
+    <!-- Sidebar -->
+    <app-sidebar></app-sidebar>
+
+    <!-- Main Content -->
+    <main class="flex-grow pl-72 overflow-y-auto">
+        <header class="h-24 bg-white border-b border-slate-100 flex items-center justify-between px-12 sticky top-0 z-10">
+            <h1 class="text-2xl font-black text-slate-800 tracking-tighter uppercase">Technician <span class="text-teal-600">Portal</span></h1>
+            
+            <div class="flex items-center gap-4">
+                <span class="text-[10px] font-black bg-teal-100 text-teal-600 px-3 py-1 rounded-full uppercase">On-Duty</span>
+            </div>
+        </header>
+
+        <section class="p-12 space-y-12">
+            <!-- Header Card -->
+            <div class="bg-slate-900 rounded-[2.5rem] p-12 text-white flex flex-col md:flex-row justify-between items-center gap-8">
+                <div class="space-y-4">
+                    <h3 class="text-4xl font-black tracking-tighter italic">Ready for <span class="text-teal-400">Collections?</span></h3>
+                    <p class="text-white/40 font-bold max-w-md">You have 3 pending pickups scheduled for today. Keep sample transit time under 2 hours.</p>
+                </div>
+                <div class="flex gap-4">
+                    <div class="bg-white/10 p-6 rounded-3xl text-center border border-white/5 min-w-[120px]">
+                        <span class="text-3xl font-black block">3</span>
+                        <span class="text-[10px] font-black uppercase text-white/30">Active</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Jobs List -->
+            <div class="space-y-6">
+                <h4 class="text-xl font-black text-slate-800 tracking-tight">Active Assignments</h4>
+                
+                <div class="grid grid-cols-1 gap-4">
+                    <div *ngFor="let job of activePickups" class="bg-white p-6 rounded-3xl border border-slate-100 flex items-center justify-between hover:border-teal-200 transition-all shadow-sm group">
+                        <div class="flex items-center gap-6">
+                            <div class="w-14 h-14 bg-teal-50 rounded-2xl flex items-center justify-center text-teal-600 group-hover:bg-teal-600 group-hover:text-white transition-all">
+                                <i-lucide name="map-pin" class="w-7 h-7"></i-lucide>
+                            </div>
+                            <div>
+                                <h5 class="text-lg font-black text-slate-800 tracking-tight">{{job.patient}}</h5>
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{job.location}} • {{job.time}}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span [class]="'text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-xl ' + (job.status === 'Pending' ? 'bg-slate-100 text-slate-400' : 'bg-teal-100 text-teal-600')">
+                                {{job.status}}
+                            </span>
+                            <button class="px-6 py-3 bg-slate-900 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-teal-600 transition-all">
+                                Update
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
